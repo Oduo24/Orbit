@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="login-page">
+  <div class="form">
+
+	 {% with messages = get_flashed_messages() %}
+	    {% if messages %}
+	    	<div class="notification is-danger">
+			{{ messages[0] }}
+		</div>
+	    {% endif %}
+	    {% endwith %} 
+    <form class="login-form" method="POST" action="{{ url_for('auth_views.login_post') }}">
+      <input type="text" placeholder="Email Address" name="email"/>
+      <input type="password" placeholder="password" name="password"/>
+      <button>login</button>
+      <p class="message">Not registered? <a id="show-register" href="{{ url_for('auth_views.signup') }}">Create an account</a></p>
+    </form>
+  </div>
+</div>
+{% endblock %}

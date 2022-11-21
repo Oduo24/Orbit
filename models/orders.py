@@ -16,7 +16,7 @@ class Order(BaseModel, Base):
 
     order_number = Column(String(100), nullable=False, unique=True)
     order_date = Column(DateTime, default=datetime.utcnow())
-    customer_id = Column(String(100), ForeignKey("customers.id"))
+    user_id = Column(String(100), ForeignKey("users.id"))
     waiter_id = Column(String(100), ForeignKey("waiters.id"))
     table_id = Column(String(100), ForeignKey("tables.id"))
     menu_items = relationship("MenuItem", secondary=order_menuitem, backref="orders")

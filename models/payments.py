@@ -11,6 +11,7 @@ class Payment(BaseModel, Base):
 
     transaction_id = Column(String(100), nullable=False, unique=True)
     tender_type_id = Column(String(100), ForeignKey("tender_types.id"))
+    user_id = Column(String(100), ForeignKey('users.id'))
 
 
     def __init__(self):

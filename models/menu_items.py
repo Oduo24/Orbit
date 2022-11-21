@@ -13,9 +13,11 @@ class MenuItem(BaseModel, Base):
     price = Column(Integer, nullable=False)
     category_id = Column(String(100), ForeignKey("categories.id"))
     uom_id = Column(String(100), ForeignKey("uom.id"))
-    quantity = Column(Integer, nullable=False)
+    state = Column(String(100), nullable=False)
+    image = Column(String(100), nullable=True)
+    description = Column(String(100), nullable=False)
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Class constructor
         """
-        super().__init__()
+        super().__init__(**kwargs)

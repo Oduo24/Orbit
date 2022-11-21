@@ -13,13 +13,7 @@ class Category(BaseModel, Base):
     description = Column(String(100), nullable=False)
     menu_items = relationship("MenuItem", backref="category")
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Initializes an category instance
         """
-        super().__init__()
-
-
-
-
-    
-
+        super().__init__(**kwargs)

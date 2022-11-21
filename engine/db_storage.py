@@ -6,16 +6,17 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from models.categories import Category
 from models.menu_items import MenuItem
 from models.uom import Uom
-from models.customers import Customer
+from models.users import User
 from models.orders import Order
 from models.waiters import Waiter
 from models.payments import Payment
 from models.tables import Table
+from models.users import User
 from models.tender_types import TenderType
 from models.base_model import Base
 
-classes = {"Category": Category, "MenuItem":MenuItem, "Uom":Uom, "Customer":Customer, "Order":Order,
-            "Waiter":Waiter, "Payment":Payment, "Table":Table, "TenderType":TenderType
+classes = {"Category": Category, "MenuItem":MenuItem, "Uom":Uom, "User":User, "Order":Order,
+        "Waiter":Waiter, "Payment":Payment, "Table":Table, "TenderType":TenderType
         }
 
 class DBStorage:
@@ -82,11 +83,20 @@ class DBStorage:
         """
         self.__session.remove()
 
-    def get(self, cls, id):
-        """Retrieves a single object of the specified class and id
+    def get_user(self, cls, email_address):
+        """Retrieves a single object of the specified class and column value
         """
-        if cls and id:
-            obj = self.__session.query(cls).get(id)
+        self.reload()
+        if cls and email_address:
+            #retrieve the user with the email address
+            obj = self.__session.query(cls).filter_by(email_address=email_address).first()
             if obj:
                 return obj
-        return None
+            return None
+
+    def get_user_session(self, user_id):
+        """retrieves the ID of a user
+        """
+        self.reload()
+        user = self.__session.query(User).get(user_id)
+        return user
