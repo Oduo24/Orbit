@@ -13,7 +13,7 @@ class Uom(BaseModel, Base):
     description = Column(String(100), nullable=False)
     menu_items = relationship("MenuItem", backref="uom")
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Initializes a uom instance
         """
-        super().__init__()
+        super().__init__(**kwargs)
