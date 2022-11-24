@@ -9,4 +9,5 @@ from views.accounting import routes
 from views.delivery import routes
 from views.waiter import routes
 from views.kot import routes
+from views.table import routes
 

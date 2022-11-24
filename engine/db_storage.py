@@ -100,3 +100,82 @@ class DBStorage:
         self.reload()
         user = self.__session.query(User).get(user_id)
         return user
+
+    def get_uom(self, symbol=None):
+        """Checks if a uom symbol already exists in the database
+        """
+        self.reload()
+        if symbol:
+            #retrieve the uom
+            obj = self.__session.query(Uom).filter_by(symbol=symbol).first()
+            if obj:
+                return obj
+            return None
+        else:
+            # Retrieve all the uoms available in the database and convert to a list object
+            # that does not contain tuples
+            obj = [uom.symbol for uom in self.__session.query(Uom.symbol)]
+            return obj
+
+
+    def get_category(self, category_name=None):
+        """Checks if a category already exists in the database
+        """
+        self.reload()
+        if category_name:
+            # Retrieve the category
+            obj = self.__session.query(Category).filter_by(category_name=category_name).first()
+            if obj:
+                return obj
+            return None
+        else:
+            # Retrieve all the category names available
+            obj = [category.category_name for category in self.__session.query(Category.category_name)]
+            return obj
+
+
+    def get_menu_item_by_category_id(self, category_id=None):
+        """Checks if an item already exists in the database
+        """
+        self.reload()
+        if category_id:
+            #retrieve the items belonging to the passed category_id
+            obj = self.__session.query(MenuItem).filter_by(category_id=category_id).all()
+            if obj:
+                return obj
+            return None
+
+    def get_menu_item(self, item_name=None):
+        """Checks if an item already exists in the database
+        """
+        self.reload()
+        if item_name:
+            #retrieve the item
+            obj = self.__session.query(MenuItem).filter_by(item_name=item_name).first()
+            if obj:
+                return obj
+            return None
+        else:
+            # Retrieve all the menu items in the database
+            obj = self.__session.query(MenuItem).all()
+            return obj
+
+    def get_inactive_menu_items(self):
+        """Retrieves all the inactive menu_items
+        """
+        self.reload()
+        obj = self.__session.query(MenuItem).filter_by(state='Inactive').all()
+        if obj:
+            return obj
+        else:
+            return None
+
+    def get_budget_menu_search(self, amount):
+        """Retrieves the menu items where the price is <= amount
+        """
+        self.reload()
+        if amount:
+            obj = self.__session.query(MenuItem).filter(MenuItem.price <= amount).all()
+            if obj:
+                return obj
+            return None

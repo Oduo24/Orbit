@@ -44,6 +44,7 @@ from views.kot.routes import kot_views
 from views.accounting.routes import account_views
 from views.delivery.routes import delivery_views
 from views.waiter.routes import waiter_views
+from views.table.routes import table_views
 
 # Handling login imports
 from flask_login import LoginManager
@@ -67,10 +68,11 @@ app.register_blueprint(kot_views)
 app.register_blueprint(account_views)
 app.register_blueprint(delivery_views)
 app.register_blueprint(waiter_views)
+app.register_blueprint(table_views)
 
-# Initializing the db
-# storage.reload()
-# storage.save()
+#Initializing the db
+#storage.reload()
+#storage.save()
 
 # Initializing login_manager
 login_manager = LoginManager()

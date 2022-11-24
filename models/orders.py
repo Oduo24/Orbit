@@ -15,13 +15,12 @@ class Order(BaseModel, Base):
     __tablename__ = 'orders'
 
     order_number = Column(String(100), nullable=False, unique=True)
-    order_date = Column(DateTime, default=datetime.utcnow())
     user_id = Column(String(100), ForeignKey("users.id"))
     waiter_id = Column(String(100), ForeignKey("waiters.id"))
     table_id = Column(String(100), ForeignKey("tables.id"))
     menu_items = relationship("MenuItem", secondary=order_menuitem, backref="orders")
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Class constructor
         """
-        super().__init__()
+        super().__init__(**kwargs)

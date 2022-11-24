@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="pt-2">
+	<div class="container">
+		<h2>Table Management</h2>
+	</div>
+
+	<table class="table table-dark">
+	<thead>
+		<tr>
+		<th scope="col"></th>
+		<th scope="col">Table Name</th>
+      		<th scope="col">Location</th>
+      		<th scope="col">Capacity</th>
+    		</tr>
+	</thead>
+	<tbody>
+		{% for table in all_tables %}
+		<tr>
+			<th scope="row"></th>
+			<td>{{table.table_name}}</td>
+      			<td>{{table.location}}</td>
+			<td>{{table.capacity}}</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th scope="row"></th>
+			<td scope="row"><b>Total = {{ number_of_tables }}</b></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</tbody>
+ 
+	</table>
+</div>
+
+{% endblock %}

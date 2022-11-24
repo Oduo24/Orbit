@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="new-uom">
+
+{% if not menu_items %}
+  <div class="form">
+	<form class="login-form" method="POST" action="{{ url_for('menu_views.items_category_wise') }}">
+		<input type="text" placeholder="Category" name="category"/>
+      	<button>Search</button>
+    	</form>
+  </div>
+{% endif %}
+
+{% if menu_items %}
+{% for item in menu_items %}
+<h3>{{item.item_name}}</h3>
+{% endfor %}
+{% endif %}
+</div>
+{% endblock %}

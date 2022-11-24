@@ -14,12 +14,26 @@
 	<form class="login-form" method="POST" action="{{ url_for('menu_views.insert_new_item_post') }}">
 		<input type="text" placeholder="Menu Item Name" name="item_name"/>
       		<input type="text" placeholder="Price" name="price"/>
-		<input type="text" placeholder="Category" name="category"/>
-		<input type="text" placeholder="UOM" name="uom_id"/>
+		<div class="col-sm-2">
+		<label for="uom">Pick a UOM</label>
+		<select class="form-select" aria-label="Default select example" name="uom" id="uom">
+			{% for i in range(0, length_of_uom) %}
+			<option>{{ all_uoms[i] }}</option>
+			{% endfor %}
+		</select>
+		</div>
+		<div class="col-sm-2">
+		<label for="category">Pick a category</label>
+                <select class="form-select" aria-label="Default select example" name="category" id="category">
+                        {% for i in range(0, length_of_category) %}
+                        <option>{{ all_categories[i] }}</option>
+                        {% endfor %}
+                </select>
+                </div>
 		<input type="text" placeholder="Description" name="description"/>
 		<input type="text" placeholder="Active" name="state"/>
 		<input type="text" placeholder="Image" name="image"/>
-      	<button>login</button>
+      		<button>Save</button>
     	</form>
   </div>
 </div>
