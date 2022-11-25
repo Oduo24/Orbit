@@ -71,8 +71,8 @@ app.register_blueprint(waiter_views)
 app.register_blueprint(table_views)
 
 #Initializing the db
-#storage.reload()
-#storage.save()
+storage.reload()
+storage.save()
 
 # Initializing login_manager
 login_manager = LoginManager()

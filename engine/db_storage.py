@@ -57,6 +57,7 @@ class DBStorage:
     def new(self, obj):
         """Adds a new object to the current db session
         """
+        self.reload()
         self.__session.add(obj)
 
     def save(self):
@@ -179,3 +180,29 @@ class DBStorage:
             if obj:
                 return obj
             return None
+
+    def check_table_if_exists(self, table_name=None):
+        """Checks if the table name supplied already exists
+        """
+        self.reload()
+        if table_name:
+            obj = self.__session.query(Table).filter_by(table_name=table_name).first()
+            if obj:
+                return obj
+            return None
+
+    def get_all_tables(self):
+        """Returns all the tables in the sytem
+        """
+        self.reload()
+        obj = self.__session.query(Table).all()
+        return obj
+
+    def get_all_waiters(self):
+        """Retrieves all the waiters in the database
+        """
+        self.reload()
+        obj = self.__session.query(Waiter).all()
+        if obj:
+            return obj
+        return None

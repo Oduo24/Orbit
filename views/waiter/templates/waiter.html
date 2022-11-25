@@ -1,1 +1,100 @@
-<h1>These are the waiters available in the system</h1>
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="pt-2">
+	<div class="container py-2">
+		<h2 class="text-center">Waiter Management</h2>
+	</div>
+
+	<div class="py-2">
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  		Add waiter
+		</button>
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  			<div class="modal-dialog">
+    				<div class="modal-content">
+      					<div class="modal-header">
+        					<h5 class="modal-title" id="exampleModalLabel">Add a new waiter</h5>
+        					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      					</div>
+      					<div class="modal-body">
+						<form method="POST" action="{{ url_for('table_views.add_table') }}" id="add_waiter_form">
+							<div class="mb-3">
+  								<label for="first_name" class="form-label">First Name</label>
+  								<input type="text" class="form-control" id="first_name" name="first_name">
+							</div>
+							<div class="mb-3">
+                                                                <label for="last_name" class="form-label">Last Name</label>
+                                                                <input type="text" class="form-control" id="last_name" name="last_name">
+                                                        </div>
+							<div class="mb-3">
+                                                                <label for="email_address" class="form-label">Email Address</label>
+                                                                <input type="email" class="form-control" id="email_address" 
+								name="email_address">
+                                                        </div>
+							<div class="mb-3">
+                                                                <label for="phone_number" class="form-label">Phone Number</label>
+                                                                <input type="number" class="form-control" id="phone_number" 
+								name="phone_number">
+                                                        </div>
+							<div class="mb-3">
+                                                                <label for="passcode" class="form-label">Passcode</label>
+                                                                <input type="text" class="form-control" id="passcode" name="passcode">
+                                                        </div>
+							<div class="modal-footer">
+								<button onclick="waiter_form_submit()" name="Btn" type="button" 
+									class="btn btn-primary">Save</button>
+							</div>
+						</form>
+      					</div>
+    				</div>
+  			</div>
+		</div>
+	</div>
+
+	{% with messages = get_flashed_messages() %}
+	    {% if messages %}
+	    	<div class="success">
+			{{ messages[0] }}
+		</div>
+	    {% endif %}
+	{% endwith %}
+
+	<table class="table table-dark">
+	<thead>
+		<tr>
+		<th scope="col"></th>
+		<th scope="col">First Name</th>
+      		<th scope="col">Last Name</th>
+      		<th scope="col">Email Address</th>
+		<th scope="col">Phone Number</th>
+    		</tr>
+	</thead>
+	<tbody>
+		{% if all_waiter %}
+		{% for waiter in all_waiters %}
+		<tr>
+			<th scope="row"></th>
+			<td>{{waiter.first__name}}</td>
+      			<td>{{waiter.last_name}}</td>
+			<td>{{waiter.email_address}}</td>
+			<td>{{waiter.phone_number}}</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th scope="row"></th>
+			<td scope="row"><b>Total = {{ number_of_waiters }}</b></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		{% endif %}
+	</tbody>
+ 
+	</table>
+</div>
+
+{% endblock %}

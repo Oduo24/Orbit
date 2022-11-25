@@ -3,9 +3,55 @@
 {% block content %}
 
 <div class="pt-2">
-	<div class="container">
-		<h2>Table Management</h2>
+	<div class="container py-2">
+		<h2 class="text-center">Table Management</h2>
 	</div>
+
+	<div class="py-2">
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  		Add table
+		</button>
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  			<div class="modal-dialog">
+    				<div class="modal-content">
+      					<div class="modal-header">
+        					<h5 class="modal-title" id="exampleModalLabel">Add a new table</h5>
+        					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      					</div>
+      					<div class="modal-body">
+						<form method="POST" action="{{ url_for('table_views.add_table') }}" id="add_table_form">
+							<div class="mb-3">
+  								<label for="table_name" class="form-label">Table Name</label>
+  								<input type="text" class="form-control" id="table_name" name="table_name">
+							</div>
+							<div class="mb-3">
+                                                                <label for="capacity" class="form-label">Capacity</label>
+                                                                <input type="number" class="form-control" id="capacity" name="capacity">
+                                                        </div>
+							<div class="mb-3">
+                                                                <label for="location" class="form-label">Location</label>
+                                                                <input type="text" class="form-control" id="location" name="location">
+                                                        </div>
+							<div class="modal-footer">
+								<button onclick="form_submit()" name="Btn" type="button" 
+									class="btn btn-primary">Save</button>
+							</div>
+						</form>
+      					</div>
+    				</div>
+  			</div>
+		</div>
+	</div>
+
+	{% with messages = get_flashed_messages() %}
+	    {% if messages %}
+	    	<div class="success">
+			{{ messages[0] }}
+		</div>
+	    {% endif %}
+	{% endwith %}
 
 	<table class="table table-dark">
 	<thead>

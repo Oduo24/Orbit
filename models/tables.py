@@ -14,7 +14,7 @@ class Table(BaseModel, Base):
     capacity = Column(Integer, nullable=False)
     orders = relationship("Order", backref="table")
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Initializes a table instance
         """
-        super().__init__()
+        super().__init__(**kwargs)

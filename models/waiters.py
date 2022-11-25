@@ -16,10 +16,11 @@ class Waiter(BaseModel, Base):
     last_name = Column(String(100), nullable=False)
     email_address = Column(String(100), nullable=False)
     phone_number = Column(Integer, nullable=False)
+    passcode = Column(String(100), nullable=False)
     orders = relationship("Order", backref="waiter")
     tables = relationship("Table", secondary=waiter_table, backref="waiters")
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Initializes a waiter instance
         """
-        super().__init__()
+        super().__init__(**kwargs)
