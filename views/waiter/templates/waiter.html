@@ -7,7 +7,7 @@
 		<h2 class="text-center">Waiter Management</h2>
 	</div>
 
-	<div class="py-2">
+	<div class="py-2" id="waiter_icons">
 		<!-- Button trigger modal -->
 		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
   		Add waiter
@@ -21,10 +21,11 @@
         					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       					</div>
       					<div class="modal-body">
-						<form method="POST" action="{{ url_for('table_views.add_table') }}" id="add_waiter_form">
+						<form method="POST" action="{{ url_for('waiter_views.add_new_waiter') }}" id="add_waiter_form">
 							<div class="mb-3">
   								<label for="first_name" class="form-label">First Name</label>
-  								<input type="text" class="form-control" id="first_name" name="first_name">
+  								<input type="text" class="form-control" id="first_name" name="first_name"
+								required>
 							</div>
 							<div class="mb-3">
                                                                 <label for="last_name" class="form-label">Last Name</label>
@@ -74,11 +75,10 @@
     		</tr>
 	</thead>
 	<tbody>
-		{% if all_waiter %}
 		{% for waiter in all_waiters %}
 		<tr>
 			<th scope="row"></th>
-			<td>{{waiter.first__name}}</td>
+			<td>{{waiter.first_name}}</td>
       			<td>{{waiter.last_name}}</td>
 			<td>{{waiter.email_address}}</td>
 			<td>{{waiter.phone_number}}</td>
@@ -91,7 +91,6 @@
 			<td></td>
 			<td></td>
 		</tr>
-		{% endif %}
 	</tbody>
  
 	</table>

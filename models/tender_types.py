@@ -9,7 +9,7 @@ class TenderType(BaseModel, Base):
     """Defines the TenderType class"""
     __tablename__ = "tender_types"
 
-    tender_name = Column(String(100), nullable=False, primary_key=True)
+    tender_name = Column(String(100), nullable=False, unique=True)
     description = Column(String(100), nullable=False)
     payments = relationship("Payment", backref="tender_type")
 

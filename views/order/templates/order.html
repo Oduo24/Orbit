@@ -1,1 +1,55 @@
-<h1>These are the orders available...</h1>
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="pt-2">
+	<div class="container py-2">
+		<h2 class="text-center">Order Management</h2>
+	</div>
+
+	<div class="py-2" id="order_icons">
+		<a class="btn btn-success" href="#" role="button">Orders</a>
+		<a class="btn btn-success" href="{{ url_for('order_views.make_counter_order') }}" role="button">Counter</a>
+	</div>
+
+	{% with messages = get_flashed_messages() %}
+	    {% if messages %}
+	    	<div class="success">
+			{{ messages[0] }}
+		</div>
+	    {% endif %}
+	{% endwith %}
+
+	<table class="table table-dark">
+	<thead>
+		<tr>
+		<th scope="col"></th>
+		<th scope="col">Order no.</th>
+      		<th scope="col">Customer Name</th>
+      		<th scope="col">Counter</th>
+		<th scope="col">Amount</th>
+    		</tr>
+	</thead>
+	<tbody>
+		{% for order in all_orders %}
+		<tr>
+			<th scope="row"></th>
+			<td></td>
+      			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th scope="row"></th>
+			<td scope="row"><b>Total = {{ number_of_orders}}</b></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</tbody>
+ 
+	</table>
+</div>
+
+{% endblock %}

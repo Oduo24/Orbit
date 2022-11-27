@@ -27,6 +27,7 @@ from models import storage
 
 # model imports
 from models.waiters import Waiter
+from models.tables import Table
 
 # engine imports
 from engine.db_storage import classes, DBStorage
@@ -62,6 +63,7 @@ def add_new_waiter():
         waiter_details = {"first_name":first_name, "last_name":last_name, "email_address":email_address, "phone_number":phone_number,
                 "passcode":generate_password_hash(passcode, method='sha256')
                 }
+
         waiter_obj = Waiter(**waiter_details)
         storage.new(waiter_obj)
         storage.save()
