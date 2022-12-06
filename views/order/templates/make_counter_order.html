@@ -8,7 +8,7 @@
 	</div>
 	<div class="container-fluid py-2">
 		<div class="row justify-content-center py-3">
-			<div class="col-md-8 text-center">
+			<div class="col-md-6 text-center">
 				<form class="row g-3" id="counter_header_form">
 					<div class="col-md-6">
                                                 <label for="inputEmail4" class="form-label">Counter No</label>
@@ -35,12 +35,15 @@
 				</div>
 	
 				<form class="row g-3" id="item_search_form">
-					<div class="col-md-6">
+					<div class="col-md-4">
 						<input class="form-control" type="search" placeholder="Search"
 						aria-label="Search">
 					</div>
-					<div class="col-md-6 text-start">
+					<div class="col-md-4 text-start">
 						<button class="btn btn-outline-success" type="submit">Search</button>
+                                        </div>
+					<div class="col-md-4 text-end">
+                                                <button class="btn btn-primary" type="submit" id="btnCheckout">Checkout</button>
                                         </div>
 				</form>
 
@@ -50,6 +53,7 @@
 							<thead>
 								<tr>
 									<th scope="col"></th>
+									<th scope="col">Select</th>
 									<th scope="col">Name</th>
 									<th scope="col">State</th>
 									<th scope="col">Price</th>
@@ -57,17 +61,15 @@
 							<thead>
 							<tbody>
 								{% for item in all_items %}
-								<tr>
+								<tr class="item-data">
 									<td scope="row"></td>
-									<td>
-										<input class="form-check-input" type="checkbox" value="" 
-										id="flexCheckDefault">
-										<label class="form-check-label" for="flexCheckDefault">
-											{{ item.item_name }}
-										</label>
+									<td class="item-check-icon">
+										<input class="form-check-input" type="checkbox" 
+										value="" id="item-checkbox" name="item-check">
 									</td>
-									<td scope="row">{{ item.state }}</td>
-									<td scope="row">{{ item.price }}</td>
+									<td class="item-name" scope="row">{{ item.item_name }}</td>
+									<td class="item-state" scope="row">{{ item.state }}</td>
+									<td class="item-price" scope="row">{{ item.price }}</td>
 								</tr>
 								{% endfor %}
 							</tbody>
@@ -75,17 +77,28 @@
 					</div>
 				</div>
         		</div>
-			<div class="col-md-4 text-center">
-				<div class="row">
-						<div class="col-md-4">
-							<label for="inputEmail4" class="form-label">Item</label>
+			<div class="col-md-6 text-center">
+				<div class="row checkout-item-row">
+						<div class="col-md-5" id="name-of-item">
+							<div class="heading fw-bold fst-italic">
+								Name
+							</div>
 						</div>
-						<div class="col-md-4">
-							<label for="inputEmail4" class="form-label">Quantity</label>
-                                        	</div>
-						<div class="col-md-4">
-							<label for="inputEmail4" class="form-label">Amount</label>
-                                        	</div>
+						<div class="col-md-2" id="quantity">
+                                                        <div class="heading fw-bold fst-italic">
+								Quantity
+                                                        </div>
+                                                </div>
+						<div class="col-md-3" id="amount">
+                                                        <div class="heading fw-bold fst-italic">
+                                                                Amount
+                                                        </div>
+                                                </div>
+						<div class="col-md-2" id="remove">
+                                                        <div class="heading fw-bold fst-italic">
+                                                                Remove
+                                                        </div>
+                                                </div>
                                 </div>
 
                 	</div>
