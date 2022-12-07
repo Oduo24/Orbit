@@ -34,22 +34,29 @@ menu_views = Blueprint('menu_views', __name__,
                             static_folder='static',
                             url_prefix='/menu')
 
-@menu_views.route('/new-item', strict_slashes=False)
-def insert_new_item():
-    """returns a form to enter details of new item"""
-
-    # Retrieve all the available categories from the database
+@menu_views.route('/inventory', strict_slashes=False)
+def all_inventory_items():
+    """Returns all the inventory menu items
+    """
     all_uoms = storage.get_uom()
     length_of_uom = len(all_uoms)
-
-    # Get all the categories in the database
+    
     all_categories = storage.get_category()
     length_of_category = len(all_categories)
 
-    return render_template('new_item.html', all_uoms=all_uoms,
-            all_categories=all_categories,
+    all_items = storage.get_menu_item()
+    number_of_items = len(all_items)
+
+
+    return render_template('inventory.html', all_uoms=all_uoms,
+            all_categories = all_categories,
             length_of_category=length_of_category,
+            all_items = all_items,
+            number_of_items = number_of_items,
             length_of_uom=length_of_uom)
+                                
+
+
 
 @menu_views.route('/process-new-item', methods=['POST'], strict_slashes=False)
 def insert_new_item_post():
@@ -68,7 +75,7 @@ def insert_new_item_post():
 
     if menu_item:
         flash('Item with hte name {} already exists'.format(menu_item.item_name))
-        return redirect(url_for('menu_views.insert_new_item'))
+        return redirect(url_for('menu_views.all_inventory_items'))
     else:
         # get the id of the category and the uom provided
         category_id = storage.get_category(category).id
@@ -83,14 +90,9 @@ def insert_new_item_post():
         storage.save()
 
         flash('Item added successfuly...')
-        return redirect(url_for('menu_views.insert_new_item'))
+        return redirect(url_for('menu_views.all_inventory_items'))
     
 
-@menu_views.route('/add-new-uom', strict_slashes=False)
-def add_uom():
-    """Add a new unit of measure to the system
-    """
-    return render_template('new_uom.html')
 
 @menu_views.route('/add-new-uom-post', methods=['POST'], strict_slashes=False)
 def add_uom_post():
@@ -102,7 +104,7 @@ def add_uom_post():
     uom = storage.get_uom(symbol)
     if uom:
         flash('UOM {} already exists'.format(uom.symbol))
-        return redirect(url_for('menu_views.add_uom'))
+        return redirect(url_for('menu_views.all_inventory_items'))
     else:
         uom_details = {"symbol":symbol, "description":description}
         uom_details_obj = Uom(**uom_details)
@@ -110,14 +112,9 @@ def add_uom_post():
         storage.save()
 
         flash('UOM added successfuly...')
-        return redirect(url_for('menu_views.add_uom'))
+        return redirect(url_for('menu_views.all_inventory_items'))
 
 
-@menu_views.route('/add-new-category', strict_slashes=False)
-def add_category():
-    """Add a new category to the database
-    """
-    return render_template('new_category.html')
 
 @menu_views.route('/add-new-category-post', methods=['POST'], strict_slashes=False)
 def add_category_post():
@@ -129,7 +126,7 @@ def add_category_post():
     category = storage.get_category(category_name)
     if category:
         flash('category {} already exists'.format(category.category_name))
-        return redirect(url_for('menu_views.add_category'))
+        return redirect(url_for('menu_views.all_inventory_items'))
     else:
         category_details = {"category_name":category_name, "description":description}
         category_details_obj = Category(**category_details)
@@ -137,7 +134,7 @@ def add_category_post():
         storage.save()
 
         flash('Category added successfuly...')
-        return redirect(url_for('menu_views.add_category'))
+        return redirect(url_for('menu_views.all_inventory_items'))
 
 @menu_views.route('/all-menu-items', methods=['GET', 'POST'], strict_slashes=False)
 def all_menu_items():
