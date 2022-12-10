@@ -71,8 +71,8 @@ app.register_blueprint(waiter_views)
 app.register_blueprint(table_views)
 
 #Initializing the db
-#storage.reload()
-#storage.save()
+storage.reload()
+storage.save()
 
 # Initializing login_manager
 login_manager = LoginManager()
@@ -87,6 +87,6 @@ def load_user(user_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5050, debug=True)
 
     

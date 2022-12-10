@@ -2,6 +2,68 @@
 
 {% block content %}
 
-<h1 class="mt-5 text-center">Orbit<br> Modern RMS</h1>
+<div class="container my-5">
+	<div class="row justify-content-center align-items-center my-4">
+		<div class="col-md-6 text-center text-md-start">
+			<h1>
+				<div class="display-2"> Orbit</div>
+				<div class="display-5 text-muted">Modern Restaurant Management System</div>
+			</h1>
+			{% if not current_user.is_authenticated %}
+			<div class="my-2">
+				<a href="{{ url_for('auth_views.login') }}" class="btn btn-success">Login</a>
+			</div>
+			{% endif %}
+		</div>
+		<div class="col-md-6 text-center">
+			<img class="img-fluid" src="static/images/rest4.png" alt="restaurant">
+                </div>
+	</div>
+</div>
+
+
+<div class="container bg-light mt-5" id="product-features">
+	<div class="text-center">
+		<h2>Product Features</h2>
+		<p class="lead text-muted">Prominent features of Orbit</p>
+	</div>
+
+	<div class="row justify-content-center align-items-center my-5 g-0">
+		<div class="col-8 col-lg-4 col-xl-3">
+			<div class="card border-0">
+				<div class="card-body text-center py-4">
+					<h4 class="card-title fw-bold">Waiter Portal</h4>
+					<p class="lead card-subtitle">Automatic Order Scheduling</p>
+					<p class="card-text mx-5 text-muted d-none d-lg-block">Waiters get the oders to dispatch as the system gets new orders</p>
+					<a href="" class="btn btn-outline-primary btn-lg mt-3">More</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-9 col-lg-4">
+                        <div class="card border-primary border-1">
+				<div class="card-header text-center text-primary">Most Popular</div>
+                                <div class="card-body text-center py-5">
+                                        <h4 class="card-title fw-bold">Customer Portal</h4>
+                                        <p class="lead card-subtitle">Self order placement</p>
+                                        <p class="card-text mx-5 text-muted d-none d-lg-block">Customer is able to place an order without needing the attention of a waiter unless when very necessary</p>
+                                        <a href="" class="btn btn-outline-primary btn-lg mt-3">More</a>
+                                </div>
+                        </div>
+                </div>
+		<div class="col-8 col-lg-4 col-xl-3">
+                        <div class="card border-0">
+                                <div class="card-body text-center py-4">
+                                        <h4 class="card-title fw-bold">Home Delivery</h4>
+                                        <p class="lead card-subtitle">Easy management of out of site deliveries</p>
+                                        <p class="card-text mx-5 text-muted d-none d-lg-block">A portal for the delivery guys with schedulling baseed on availability</p>
+                                        <a href="" class="btn btn-outline-primary btn-lg mt-3">More</a>
+                                </div>
+                        </div>
+                </div>
+	</div>
+</div>
+
+
+
 
 {% endblock %}
