@@ -18,7 +18,7 @@ class Order(BaseModel, Base):
     user_id = Column(String(100), ForeignKey("users.id"))
     waiter_id = Column(String(100), ForeignKey("waiters.id"))
     table_id = Column(String(100), ForeignKey("tables.id"))
-    amount = Column(Integer, ForeignKey("payments.id"), nullable=False)
+    payment_id = Column(String(100), ForeignKey("payments.id"), nullable=False)
     menu_items = relationship("MenuItem", secondary=order_menuitem, backref="orders")
 
     def __init__(self, **kwargs):
