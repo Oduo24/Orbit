@@ -9,7 +9,7 @@ class MenuItem(BaseModel, Base):
     """Defines the MenuItem class"""
     __tablename__ = 'menu_items'
 
-    item_name = Column(String(100), nullable=False, unique=True)
+    item_name = Column(String(100), nullable=False, primary_key=True)
     price = Column(Integer, nullable=False)
     category_id = Column(String(100), ForeignKey("categories.id"))
     uom_id = Column(String(100), ForeignKey("uom.id"))

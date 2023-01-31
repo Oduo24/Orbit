@@ -1,1 +1,74 @@
-<h1>These are the kots available in the kitchen counter</h1>
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="pt-2">
+	<div class="container py-2">
+		<h2 class="text-center">Incoming Orders</h2>
+	</div>
+
+	{% with messages = get_flashed_messages() %}
+	    {% if messages %}
+	    	<div class="success">
+			{{ messages[0] }}
+		</div>
+	    {% endif %}
+	{% endwith %}
+
+	<table class="table table-striped table-hover pt-3">
+	<thead>
+		<tr>
+		<th scope="col"></th>
+		<th scope="col">Order no.</th>
+      		<th scope="col">Waiter Name</th>
+		<th scope="col">Table</th>
+      		<th scope="col">Counter</th>
+		<th scope="col">Tender</th>
+		<th scope="col">Amount (Ksh)</th>
+		<th scope="col">Details</th>
+    		</tr>
+	</thead>
+	<tbody>
+		{% for order in orders %}
+		<tr>
+			<th scope="row"></th>
+			<td>{{ order.order_number }}</td>
+			<td>{{ order.waiter }}</td>
+			<td>{{ order.table }}</td>
+			<td>{{ order.counter }}</td>
+			<td>{{ order.tender }}</td>
+			<td>{{ order.total }}</td>
+			<td><button class="btn btn-primary orderDetails btn-sm" type="button" data-bs-toggle="offcanvas"
+					data-bs-target="#order-details" aria-controls="offcanvasWithBothOptions">
+					Details
+			    </button>
+			</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th scope="row"></th>
+			<td scope="row"><b>Total = {{ number_of_orders }}</b></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</tbody>
+ 
+	</table>
+
+	<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="order-details" 
+		aria-labelledby="offcanvasWithBothOptionsLabel">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Order Items</h5>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body">
+			<p>Try scrolling the rest of the page to see this option in action.</p>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

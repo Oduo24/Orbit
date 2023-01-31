@@ -30,6 +30,8 @@ from models.waiters import Waiter
 from models.tables import Table
 from models.tender_types import TenderType
 from models.users import User
+from models.counters import Counter
+from models.unique_number_gen import Unique_number
 
 """flask imports"""
 from flask import Flask
@@ -45,6 +47,7 @@ from views.accounting.routes import account_views
 from views.delivery.routes import delivery_views
 from views.waiter.routes import waiter_views
 from views.table.routes import table_views
+from views.counter.routes import counter_views
 
 # Handling login imports
 from flask_login import LoginManager
@@ -69,6 +72,7 @@ app.register_blueprint(account_views)
 app.register_blueprint(delivery_views)
 app.register_blueprint(waiter_views)
 app.register_blueprint(table_views)
+app.register_blueprint(counter_views)
 
 #Initializing the db
 storage.reload()
@@ -87,10 +91,6 @@ def load_user(user_id):
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    app.run(host='0.0.0.0', port=5050, debug=True)
-=======
-    app.run(host='0.0.0.0', port=6000, debug=True)
->>>>>>> 7e6c3ad13905e4c4e6fc11dd69e49cbd1d8e912c
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
     

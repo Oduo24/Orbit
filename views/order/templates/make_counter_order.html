@@ -11,20 +11,32 @@
 			<div class="col-md-6 text-center">
 				<form class="row g-3" id="counter_header_form">
 					<div class="col-md-6">
-                                                <label for="inputEmail4" class="form-label">Counter No</label>
-                                                <input type="text" class="form-control" id="inputEmail4">
+                                                <label for="counter-number" class="form-label">Counter No</label>
+                                                <input type="text" class="form-control" id="counter-number" value="Billing Counter">
                                         </div>
 					<div class="col-md-6">
-    						<label for="inputEmail4" class="form-label">Table</label>
-    						<input type="text" class="form-control" id="inputEmail4">
+    						<label for="table-name" class="form-label">Table</label>
+    						<select class="form-select" name="table" id="table-name">
+							{% for table in all_tables %}
+								<option>{{ table.table_name }}</option>
+							{% endfor %}
+						</select>
   					</div>
 					<div class="col-md-6">
-                                                <label for="inputEmail4" class="form-label">Tender Type</label>
-                                                <input type="text" class="form-control" id="inputEmail4">
+                                                <label for="tender-type" class="form-label">Tender Type</label>
+						<select class="form-select" name="tender-type" id="tender-type">
+							{% for i in range(0, number_of_tender_types) %}
+								<option>{{ all_tender_types[i] }}</option>
+							{% endfor %}
+						</select>
                                         </div>
 					<div class="col-md-6">
-                                                <label for="inputEmail4" class="form-label">Waiter</label>
-                                                <input type="text" class="form-control" id="inputEmail4">
+                                                <label for="waiter-name" class="form-label">Waiter</label>
+                                                <select class="form-select" name="table" id="waiter-name">
+							{% for waiter in all_waiters %}
+								<option>{{ waiter.first_name }}</option>
+							{% endfor %}
+						</select>
                                         </div>
 				</form>
 
@@ -36,7 +48,7 @@
 	
 				<form class="row g-3" id="item_search_form">
 					<div class="col-md-4">
-						<input class="form-control" type="search" placeholder="Search"
+						<input class="form-control" type="search" placeholder="Search" id="item-search"
 						aria-label="Search">
 					</div>
 					<div class="col-md-4 text-start">
@@ -100,10 +112,100 @@
                                                         </div>
                                                 </div>
                                 </div>
-
+				<div class="row submit-order">
+					<div class="col-md-5" id="">
+                                        	<h2>Total: Ksh<span class="" id="total-amount">0</span></h2>
+                                        </div>
+					<div class="col" id="">
+                                                <div class="d-grid gap-2">
+							<!-- Button trigger modal -->
+  							<button class="btn btn-success btn-lg" type="button" id="pay-btn"
+							data-bs-toggle="modal" data-bs-target="#order-modal">
+								Pay
+							</button>
+						</div>
+                                        </div>
+				</div>
                 	</div>
 		</div>
 	</div>
 </div>
+
+		<!-- Modal -->
+		<div class="modal fade" id="order-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  			<div class="modal-dialog">
+    				<div class="modal-content">
+      					<div class="modal-header text-center">
+        					<h5 class="modal-title text-center" id="exampleModalLabel">New Order</h5>
+        					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      					</div>
+      					<div class="modal-body">
+						<form method="POST" action="{{ url_for('order_views.make_counter_order')  }}" id="new-order-form">
+							  <p class="text-danger d-none" id="wrong-number">Wrong phone number</p>
+							  <div class="form-group row pb-2">
+							    <div class="d-flex justify-content-center pb-2 d-none" id="loadingSpinner">
+  								<div class="spinner-border text-primary" role="status">
+    									<span class="sr-only">Loading...</span>
+  								</div>
+							    </div>
+							    <div class="d-none" id="orderMessage">
+								    <p class="text-success"></p>
+							    </div>
+                                                            <label for="customer" class="col-sm-2 col-form-label">Customer:</label>
+                                                            <div class="col-sm-10">
+                                                              <input type="text" class="form-control" id="customer-phone-number">
+                                                            </div>
+                                                          </div>
+							  <div class="form-group row">
+							    <label for="counterNumber" class="col-sm-2 col-form-label">Counter:</label>
+							    <div class="col-sm-10">
+							      <input type="text" class="form-control" id="counterNumber" disabled>
+							    </div>
+							  </div>
+							  <div class="form-group row">
+                                                            <label for="tenderType" class="col-sm-2 col-form-label">Tender:</label>
+                                                            <div class="col-sm-10">
+                                                              <input type="text" class="form-control" id="tenderType" disabled>
+                                                            </div>
+                                                          </div>
+							  <div class="form-group row">
+							    <label for="waiterName" class="col-sm-2 col-form-label">Waiter:</label>
+							    <div class="col-sm-10">
+							      <input type="text" class="form-control" id="waiterName" disabled>
+							    </div>
+							  </div>
+							  <div class="form-group row">
+							    <label for="tableName" class="col-sm-2 col-form-label">Table:</label>
+							    <div class="col-sm-10">
+							      <input type="text" class="form-control" id="tableName" disabled>
+							    </div>
+							  </div>
+							  <table class="table">
+							    <thead>
+							      <tr>
+								<th scope="col">Item Name</th>
+								<th scope="col">Quantity</th>
+								<th scope="col">Amount</th>
+							      </tr>
+							    </thead>
+							    <tbody id="order-item-details">
+
+
+							    </tbody>
+							  </table>
+							  <div class="form-group row">
+							    <label for="totalAmount" class="col-sm-2 col-form-label">Total:Ksh</label>
+							    <div class="col-sm-10">
+							      <input type="text" class="form-control text-center" id="totalAmount" disabled>
+							    </div>
+							  </div>
+							  <div class="form-group row pt-3">
+							      <button type="submit" class="btn btn-success btn-lg" id="final-pay">PAY</button>
+							  </div>
+							</form>
+      					</div>
+    				</div>
+  			</div>
+		</div>
 
 {% endblock %}

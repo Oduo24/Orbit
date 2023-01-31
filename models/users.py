@@ -18,8 +18,6 @@ class User(BaseModel, Base, UserMixin):
     phone_number = Column(Integer, nullable=False)
     password = Column(String(100), nullable=False)
     account_balance = Column(Integer, nullable=True)
-    orders = relationship("Order", backref="user")
-    payments = relationship("Payment", backref="paid_by")
 
 
     def __init__(self, **kwargs):

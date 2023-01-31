@@ -9,10 +9,11 @@ class Payment(BaseModel, Base):
     """Defines the Payment class"""
     __tablename__ = 'payments'
 
+    amount_paid = Column(Integer, nullable=False)
+    order_number = Column(Integer, nullable=False, unique=True)
     transaction_id = Column(String(100), nullable=False, unique=True)
-    tender_type_id = Column(String(100), ForeignKey("tender_types.id"))
-    user_id = Column(String(100), ForeignKey('users.id'))
-    orders = relationship("Order", backref="payment")
+    tender_type = Column(String(100))
+    user = Column(String(100), nullable=False)
 
 
     def __init__(self):

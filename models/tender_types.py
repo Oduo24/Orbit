@@ -11,7 +11,6 @@ class TenderType(BaseModel, Base):
 
     tender_name = Column(String(100), nullable=False, unique=True)
     description = Column(String(100), nullable=False)
-    payments = relationship("Payment", backref="tender_type")
 
     def __init__(self):
         """Initializes a TenderType instance

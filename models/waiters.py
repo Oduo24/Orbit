@@ -17,7 +17,6 @@ class Waiter(BaseModel, Base):
     email_address = Column(String(100), nullable=False)
     phone_number = Column(Integer, nullable=False)
     passcode = Column(String(100), nullable=False)
-    orders = relationship("Order", backref="waiter")
     tables = relationship("Table", secondary=waiter_table, backref="waiters")
 
     def __init__(self, **kwargs):

@@ -74,7 +74,7 @@ def insert_new_item_post():
     menu_item = storage.get_menu_item(item_name)
 
     if menu_item:
-        flash('Item with hte name {} already exists'.format(menu_item.item_name))
+        flash('Item with the name {} already exists'.format(menu_item.item_name))
         return redirect(url_for('menu_views.all_inventory_items'))
     else:
         # get the id of the category and the uom provided

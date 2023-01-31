@@ -12,7 +12,6 @@ class Table(BaseModel, Base):
     table_name = Column(String(100), nullable=False, unique=True)
     location = Column(String(100), nullable=False)
     capacity = Column(Integer, nullable=False)
-    orders = relationship("Order", backref="table")
 
     def __init__(self, **kwargs):
         """Initializes a table instance

@@ -25,24 +25,30 @@
 		<tr>
 		<th scope="col"></th>
 		<th scope="col">Order no.</th>
-      		<th scope="col">Customer Name</th>
+      		<th scope="col">Waiter Name</th>
+		<th scope="col">Table</th>
       		<th scope="col">Counter</th>
-		<th scope="col">Amount</th>
+		<th scope="col">Tender</th>
+		<th scope="col">Amount (Ksh)</th>
     		</tr>
 	</thead>
 	<tbody>
 		{% for order in all_orders %}
 		<tr>
 			<th scope="row"></th>
-			<td></td>
-      			<td></td>
-			<td></td>
-			<td></td>
+			<td>{{ order.order_number }}</td>
+			<td>{{ order.waiter }}</td>
+			<td>{{ order.table }}</td>
+			<td>{{ order.counter }}</td>
+			<td>{{ order.tender }}</td>
+			<td>{{ order.total }}</td>
 		</tr>
 		{% endfor %}
 		<tr>
 			<th scope="row"></th>
-			<td scope="row"><b>Total = {{ number_of_orders}}</b></td>
+			<td scope="row"><b>Total = {{ number_of_orders }}</b></td>
+			<td></td>
+			<td></td>
 			<td></td>
 			<td></td>
 			<td></td>

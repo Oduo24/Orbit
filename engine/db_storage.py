@@ -1,22 +1,24 @@
 #!/usr/bin/python3
 """Defines the db storage methods. ie interacts with the database to create, delete, modify, query objects"""
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.categories import Category
 from models.menu_items import MenuItem
 from models.uom import Uom
 from models.users import User
-from models.orders import Order
+from models.orders import Order, order_menuitem
 from models.waiters import Waiter
 from models.payments import Payment
 from models.tables import Table
 from models.users import User
 from models.tender_types import TenderType
 from models.base_model import Base
+from models.counters import Counter
+from models.unique_number_gen import Unique_number
 
 classes = {"Category": Category, "MenuItem":MenuItem, "Uom":Uom, "User":User, "Order":Order,
-        "Waiter":Waiter, "Payment":Payment, "Table":Table, "TenderType":TenderType
+        "Waiter":Waiter, "Payment":Payment, "Table":Table, "TenderType":TenderType, "Counter":Counter, "Unique_number": Unique_number,
         }
 
 class DBStorage:
@@ -39,7 +41,8 @@ class DBStorage:
         MYSQL_HOST = os.getenv("MYSQL_HOST")
         MYSQL_DB = os.getenv("MYSQL_DB")
 
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB))
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB),
+                pool_size=100, max_overflow=0)
 
 
     def all(self, cls):
@@ -196,7 +199,9 @@ class DBStorage:
         """
         self.reload()
         obj = self.__session.query(Table).all()
-        return obj
+        if obj:
+            return obj
+        return None
 
     def get_all_waiters(self):
         """Retrieves all the waiters in the database
@@ -208,3 +213,76 @@ class DBStorage:
         return None
 
 
+    def get_counters(self):
+        """retrieve all the counter instances in the database
+        """
+        self.reload()
+        # Retrieve all the menu items in the database
+        obj = [counter.counter_name for counter in self.__session.query(Counter.counter_name)]
+        if obj:
+            return obj
+        return None
+
+    def get_tender_types(self):
+        """retrieve all tender_types instances in the database
+        """
+        self.reload()
+        # Retrieve all the tender types in the database
+        obj = [tender.tender_name for tender in self.__session.query(TenderType.tender_name)]
+        if obj:
+            return obj
+        return None
+
+    def get_unique_number(self, name):
+        """Retrieves the current unique number stored of the type (name) from the db
+        """
+        unique_number = self.__session.query(Unique_number).filter_by(name=name).first()
+        return unique_number
+
+    def get_all_orders(self):
+        """Retrieves all the orders in the database
+        """
+        obj = self.__session.query(Order).all()
+        if obj:
+            return obj
+        return None
+
+    def update_order_number(self, new_order_number):
+        """ Increments unique order number
+        """
+        self.reload()
+        self.__session.query(Unique_number).filter(Unique_number.name == "orders").update({Unique_number.number: new_order_number})
+        self.save()
+        return None
+
+    def create_order_item_inst(self, order_number, item, quantity, amount):
+        """ Creates an instance of order item
+        """
+        item_inst = order_menuitem.insert().values(
+                    item_name = item,
+                    order_number = order_number,
+                    quantity = quantity,
+                    amount = amount
+                )
+        conn = self.__engine.connect()
+        conn.execute(item_inst)
+        conn.close()
+        return None
+
+    def get_unserved_orders(self):
+        """Returns all unserved orders if there is none returns None
+        """
+        unserved_orders = self.__session.query(Order).filter(Order.isPaid == "False").all()
+        if unserved_orders:
+            return unserved_orders
+        return None
+
+    def get_order_items(self, data):
+        """Retrieves all the items in the table 'order_menuitem' that belong to the order number 'data'
+        """
+        order_items = select([order_menuitem]).where(order_menuitem.c.order_number == data)
+
+        # Create a connection
+        conn = self.__engine.connect()
+        result = conn.execute(order_items)
+        return result

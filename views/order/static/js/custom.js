@@ -93,13 +93,12 @@ function addAmountField(index, inputBtn) {
 	//amountDiv.appendChild(amountParagraph)
         parentAmount.lastChild.after(amountDiv)
 
-	//Change quantity event listener
-	//let quantity = document.getElementById(`${itemsName[index].replace(' ', '_')}`)
-	//quantity.addEventListener('change', (event) => {
-	//	event.preventDefault()
-	//	amountParagraph.innerHTML = +itemsPrice[index] * +event.target.value
+	// Update total Amount
+	let subTotalAmount = document.querySelector('#total-amount')
+	let newSubTotalAmount= +subTotalAmount.innerHTML + +itemsPrice[index]
+	subTotalAmount.innerHTML = newSubTotalAmount
+	
 
-	//})
 }
 
 function removeItemField(index) {
@@ -161,4 +160,197 @@ checkoutBtn.addEventListener('click', (ev) => {
 
 })
 
+// Event listener for change in the amount of an item.
+// Incase of change, update the total amount
+//let itemAmountFields = document.querySelectorAll('.amount-value')
 
+let changeInCheckoutItems = document.querySelector('.checkout-item-row')
+changeInCheckoutItems.addEventListener('DOMSubtreeModified', (ev) => {
+	ev.preventDefault()
+
+	// Call the function that does recalculation of the Total amount.
+	updateTotalAmount()
+  });
+
+function updateTotalAmount() {
+  let total = 0;
+  // Get the the current total amount
+  let subTotalAmount = document.querySelector('#total-amount');
+  
+  // Get all the amount fields for each item in the checkout list
+  let itemAmountFields = document.querySelectorAll('.amount-value');
+  
+  // Add all the amount values for each of the item
+  itemAmountFields.forEach((field) => {
+    total = +field.innerHTML + total;
+    });
+  subTotalAmount.innerHTML = total;
+}
+
+
+// Process the order details for final submission
+// Add event listener on pay button
+let payBtn = document.querySelector('#pay-btn');
+payBtn.addEventListener('click', (ev) => {
+  ev.preventDefault()
+
+  // Get all the order details
+  let counter = document.querySelector('#counter-number').value;
+  let tender = document.querySelector('#tender-type').value;
+  let waiter = document.querySelector('#waiter-name').value;
+  let table = document.querySelector('#table-name').value;
+  let total = document.querySelector('#total-amount').innerHTML;
+  
+  // Set the values in the order submission form
+  document.querySelector('#counterNumber').value = counter;
+  document.querySelector('#tenderType').value = tender;
+  document.querySelector('#waiterName').value = waiter;
+  document.querySelector('#tableName').value = table;
+  document.querySelector('#totalAmount').value = total;
+
+  // Get item names, quantity, and amount
+  let items = []
+  let quantities = []
+  let amounts = []
+  
+  document.querySelectorAll('.name-value > p').forEach((name) => {
+    items.push(name.innerHTML);
+  });
+  document.querySelectorAll('.quantity-value').forEach((elem) => {
+    quantities.push(+elem.value);
+  });
+  document.querySelectorAll('.amount-value').forEach((amount) => {
+    amounts.push(+amount.innerHTML);
+  });
+
+
+  // Set the values in the order submission form table 
+  items.forEach((item, index) => {
+    // Create a table row for the details
+    let tableRow = document.createElement('tr')
+
+    // Create table data and input tag for each of the column values
+    let itemTableData = document.createElement('td');
+    let itemInputTag = document.createElement('input');
+    itemInputTag.classList.add('form-control');
+    itemInputTag.setAttribute('id', `${item.replace(' ', '_')}`);
+    itemInputTag.setAttribute('type', 'text');
+    itemInputTag.setAttribute('disabled', null);
+    itemInputTag.value = item;
+
+    let quantityTableData = document.createElement('td');
+    let quantityInputTag = document.createElement('input');
+    quantityInputTag.classList.add('form-control');
+    quantityInputTag.setAttribute('id', `${item.replace(' ', '_')}`);
+    quantityInputTag.setAttribute('type', 'text');
+    quantityInputTag.setAttribute('disabled', null);
+    quantityInputTag.value = quantities[index];
+
+    let amountTableData = document.createElement('td');
+    let amountInputTag = document.createElement('input');
+    amountInputTag.classList.add('form-control');
+    amountInputTag.setAttribute('id', `${item.replace(' ', '_')}`);
+    amountInputTag.setAttribute('type', 'text');
+    amountInputTag.setAttribute('disabled', null);
+    amountInputTag.value = amounts[index];
+
+    //append child elements to parent elements
+    itemTableData.appendChild(itemInputTag)
+    tableRow.appendChild(itemTableData)
+
+    quantityTableData.appendChild(quantityInputTag)
+    tableRow.appendChild(quantityTableData)
+
+    amountTableData.appendChild(amountInputTag)
+    tableRow.appendChild(amountTableData)
+
+    // Append the node to the document
+    document.querySelector('#order-item-details').appendChild(tableRow);
+  });
+});
+
+
+
+// Function that validates phone number
+function validatePhoneNumber(phoneNumber) {
+  // Checks if phoneNumber is a valid phone number if it is it returns the number else returns false'
+  if (phoneNumber.length != 10 || phoneNumber[0] != 0 || phoneNumber[1] != 7) {
+    return false
+  } else if (isNaN(+phoneNumber) == true) {
+    return false
+  } else {
+  return +phoneNumber;
+  }
+}
+
+
+
+// Set on-click event listener on final-pay button
+let finalPayBtn = document.querySelector('#final-pay');
+
+finalPayBtn.addEventListener('click', (ev) => {
+  ev.preventDefault();
+  let customerPhoneNumber = document.querySelector('#customer-phone-number').value;
+  let validatedPhoneNumber = validatePhoneNumber(customerPhoneNumber);
+  if (validatedPhoneNumber == false) {
+    // Flash message 'Wrong Phone Number...'
+    document.querySelector('#wrong-number').classList.remove('d-none');
+  } else {
+    // Submit the form for backend processing
+    // retrieve the order details from the final form
+    let customer = document.querySelector('#customer-phone-number').value;
+    let counter = document.querySelector('#counterNumber').value;
+    let tender = document.querySelector('#tenderType').value;
+    let waiter = document.querySelector('#waiterName').value;
+    let table = document.querySelector('#tableName').value;
+    let total = document.querySelector('#totalAmount').value;
+
+    // Get item names, quantity, and amount
+    let items = []
+    let quantities = []
+    let amounts = []
+
+    document.querySelectorAll('.name-value > p').forEach((name) => {
+      items.push(name.innerHTML);
+    });
+    document.querySelectorAll('.quantity-value').forEach((elem) => {
+      quantities.push(+elem.value);
+    });
+    document.querySelectorAll('.amount-value').forEach((amount) => {
+      amounts.push(+amount.innerHTML);
+    });
+
+    data = {
+      customer,
+      counter,
+      tender,
+      waiter,
+      table,
+      total,
+      items,
+      quantities,
+      amounts,
+    }
+    let xhr = new XMLHttpRequest();
+
+    xhr.open("POST", "/order/counter-order", true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    
+    xhr.onreadystatechange = function() {
+      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+        let response = JSON.parse(this.responseText);
+	document.querySelector('#loadingSpinner').classList.toggle('d-none');
+	document.querySelector('#orderMessage > p').innerHTML = `Order number: ${response[0]}, Payment: ${response[1]} processed...`;
+	document.querySelector('#orderMessage').classList.toggle('d-none');
+      }
+    }
+    xhr.send(JSON.stringify(data));
+    document.querySelector('#loadingSpinner').classList.toggle('d-none');
+  }
+ });
+
+
+// Item search event
+//document.querySelector('#item-search').addEventListener('keyup', function() {
+
+//}

@@ -40,6 +40,7 @@ def get_all_tables():
     """returns all the tables in the system
     """
     all_tables = storage.get_all_tables()
+    print(all_tables)
     number_of_tables = len(all_tables)
     return render_template('table.html', all_tables=all_tables, number_of_tables=number_of_tables)
 
