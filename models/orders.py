@@ -24,6 +24,7 @@ class Order(BaseModel, Base):
     counter = Column(String(100), nullable=False)
     tender = Column(String(100), nullable=False)
     total = Column(Integer, nullable=False)
+    is_served = Column(Integer, default=0)
     isPaid = Column(String(100), nullable=True)
     menu_items = relationship("MenuItem", secondary=order_menuitem, backref="orders")
 

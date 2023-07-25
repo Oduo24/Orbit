@@ -53,3 +53,7 @@ def get_order_items():
             items_list.append(row[order_menuitem.c.amount])
         print(items_list)
         return jsonify(items_list)
+
+@kot_views.route('/order-status', methods=["GET", "POST"], strict_slashes=False)
+def check_modify_order_status():
+    return jsonify('Success...')

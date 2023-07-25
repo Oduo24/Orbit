@@ -2,9 +2,69 @@
 
 {% block content %}
 
-	<h1 class="title">
+	<h3 class="title mt-3">
   		Welcome, {{ name }}!
-	</h1>
+	</h3>
+
+	<div class="pt-5 lead text-center">
+        <h2>Problem Statement...</h2>
+        <p>Restaurants are facing various challenges in managing their operations efficiently and effectively, leading to decreased profitability and customer satisfaction. Traditional restaurant management systems are often complicated, slow, and require a large workforce to operate, leading to increased operational costs and decreased operational efficiency. In addition, delays in order delivery and inaccurate order taking can result in dissatisfied customers and lost sales.</p>
+
+      </div>
+
+    <div class="container-fluid">
+      <h1 class="text-center mb-3">Improvements on the Current Systems</h1>
+      <div class="text-center">
+      <ul class="list-group mt-5">
+        <li class="list-group-item">
+          <h3>Increased Operational Efficiency</h3>
+          <p>Simple process flow</p>
+        </li>
+        <li class="list-group-item">
+          <h3>Reduced Operational Cost</h3>
+          <p>Fewer waiters are needed</p>
+        </li>
+        <li class="list-group-item">
+          <h3>Convenience</h3>
+          <p>Use of BYOD (Bring Your Own Device)</p>
+        </li>
+        <li class="list-group-item">
+          <h3>Eliminates Delays in Order Delivery</h3>
+        </li>
+	<li class="list-group-item">
+          <h3>Accuracy in Order Taking</h3>
+          <p>Since it's done electronically</p>
+        </li>
+        <li class="list-group-item">
+          <h3>Affordability</h3>
+          <p>Can be used by small and medium sized restaurants</p>
+        </li>
+      </ul>
+      </div>
+      <div class="pt-5">
+        <h2>To achieve my objectives..</h2>
+<p>To achieve the communication between the web server and the arduino based waiter device, I'll need the folowing:</p>
+
+<ul>
+  <li><strong>Arduino Board:</strong> You can use an Arduino Uno, Mega, or any other compatible board as the main microcontroller for the device.</li>
+  <li><strong>Ethernet or Wi-Fi Shield:</strong> To connect the Arduino device to the internet, you can use an Ethernet or Wi-Fi shield, such as the Arduino Ethernet Shield or the ESP8266 Wi-Fi Module.</li>
+  <li><strong>Display Unit:</strong> For the display unit, you can use an LCD or OLED screen connected to the Arduino board using an I2C or SPI interface.</li>
+  <li><strong>Input Keyboard:</strong> For the input keyboard, you can use a keypad matrix or a set of pushbuttons connected to the Arduino board.</li>
+  <li><strong>Resistors:</strong> To interface with the input keyboard, you may need to use resistors to pull up or down the inputs to the proper voltage levels.</li>
+  <li><strong>I2C:</strong> The I2C interface provides a way for the display unit to communicate with the input keyboard by sending and receiving data over two lines, SCL (Serial Clock) and SDA (Serial Data).</li>
+</ul>
+      </div>
+
+      <div class="pt-5">
+        <h2>Foreseen challenges and possible solutions...</h2>
+<p>To achieve the communication between the web server and the arduino based waiter device, I'll need the folowing:</p>
+
+<ul>
+  <li><strong>Synchronous communication between the device components:</strong> Communication between the input keyboard and the display unit as the display unit is used to accept waiter confirmation input and also display data being sent by the web server. One possible solutin will be to figure out how I can use an SPI interface</li>
+  <li><strong>Memory buffer:</strong>I will need a memory buffer to store the Orders in a queue for a particular device.</li>
+      </div>
+    </div>
+
 
 {% endblock %}
 

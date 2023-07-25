@@ -7,7 +7,7 @@ from datetime import datetime
 import uuid
 
 Base = declarative_base()
-time = "%Y-%m-%dT%H:%M:%S.%f"
+time = "%d-%m-%YT%H:%M:%S.%f"
 
 class BaseModel:
     """Defines the base class to be inherited by other models"""

@@ -272,7 +272,12 @@ class DBStorage:
     def get_unserved_orders(self):
         """Returns all unserved orders if there is none returns None
         """
-        unserved_orders = self.__session.query(Order).filter(Order.isPaid == "False").all()
+        unserved_orders = self.__session.query(Order).filter(Order.isPaid == "False").order_by(Order.created_at.desc()).all()
+       
+       # changing the date format to dd/mm/yyyy
+        for order in unserved_orders:
+            order.created_at = order.created_at.strftime('%d/%m/%Y')
+
         if unserved_orders:
             return unserved_orders
         return None
