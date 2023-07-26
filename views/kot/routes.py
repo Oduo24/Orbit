@@ -51,9 +51,20 @@ def get_order_items():
             items_list.append(row[order_menuitem.c.item_name])
             items_list.append(row[order_menuitem.c.quantity])
             items_list.append(row[order_menuitem.c.amount])
-        print(items_list)
         return jsonify(items_list)
 
 @kot_views.route('/order-status', methods=["GET", "POST"], strict_slashes=False)
 def check_modify_order_status():
-    return jsonify('Success...')
+    """Sets the order status to 1(Served)
+    """
+    if request.method == "POST":
+        order_number = int(request.get_json()['order_number'])
+        status = storage.modify_order_status(order_number)
+
+        if status == 1:
+            return jsonify("Order status Changed to Served...")
+        else:
+            return jsonify("Order status Not changed...")
+        
+
+    #return jsonify('This is the order number {}'.format(order_number))

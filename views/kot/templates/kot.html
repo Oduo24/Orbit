@@ -40,7 +40,7 @@
 		</th>
                 <th scope="col">
 			<div class="input-group mb-3">
-                                <input type="text" class="form-control" aria-describedby="basic-addon1">
+                                <input type="text" class="form-control" id="order_number_search" aria-describedby="basic-addon1">
                         </div>	
 		</th>
                 <th scope="col">
@@ -89,7 +89,7 @@
 			<td>{{ order.counter }}</td>
 			<td>{{ order.tender }}</td>
 			<td>{{ order.total }}</td>
-			{% if order.status == 1 %}
+			{% if order.is_served == 1 %}
 			<td><p class="text-success">Served</p></td>
 			{% else %}
 			<td><p class="text-danger">Not Served</p></td>

@@ -95,7 +95,7 @@ finishButtons.forEach(finishButton => {
    * Event listener function to handle the click event on each "finishButtonClick" button.
    * @param {Event} ev - The click event object.
    */
-  finishButton.addEventListener('click', (ev) => {
+  finishButton.addEventListener('click', async (ev) => {
     // Prevent the default behavior of the click event, such as form submission.
     ev.preventDefault();
 
@@ -105,26 +105,50 @@ finishButtons.forEach(finishButton => {
     // Define the URL for the API endpoint to query the order status.
     const orderStatusURL = '/kot/order-status/';
 
-    // Fetch the data from the API using the Fetch API.
-    fetch(orderStatusURL)
-      .then(response => {
-        // Check if the response status is OK (status code 200).
-        if (!response.ok) {
-          // If the response status is not OK, throw an error to handle it in the next .catch() block.
-          throw new Error('Network response was not OK!');
-        }
-        // Parse the response body as JSON and return it as a Promise for the next .then() block.
-        return response.json();
-      })
-      .then(data => {
-        // Handle the parsed JSON data from the API response.
-        console.log(data);
-        // You can further process the data or update the UI based on the API response.
-      })
-      .catch(error => {
-        // Handle any errors that occurred during the fetch or parsing process.
-        console.log('Error while processing your request...');
+    // Use fetch API to POST the order number which will be used in the view to set the order status to 1(served).
+    try {
+      const response = await fetch(orderStatusURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 'order_number': orderNumber }),
       });
+      const result = await response.json();
+      let orderNumberLabel = document.querySelector('#orderNumberDisplay');
+      const addTick = document.createElement("span");
+      addTick.textContent = 'Done';
+
+      //Adding a new class to the created element
+      addTick.classList.add("badge", "rounded-pill", "bg-success")
+      orderNumberLabel.appendChild(addTick);
+
+    } catch (error) {
+      console.error("Error:", error);
+    }
   });
 });
 
+
+
+let orderNumberSearchBox = document.querySelector('#order_number_search');
+let searchList = document.querySelectorAll('.order_number');
+
+orderNumberSearchBox.addEventListener('input', (ev) => {
+  ev.preventDefault();
+  let searchTerm = orderNumberSearchBox.value;
+  console.log(searchTerm)
+  
+
+  // Loop through the list items and hide/show them based on the search term
+  searchList.forEach((td) => {
+    const text = td.innerText;
+    console.log(text);
+    if (text.includes('searchTerm')) {
+      td.parentElement.style.display = 'block';
+      //td.style.display = 'block';
+    } else {
+      td.parentElement.style.display = 'none';
+    }
+  });
+});

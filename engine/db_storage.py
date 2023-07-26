@@ -85,7 +85,7 @@ class DBStorage:
     def close(self):
         """Closes the current session
         """
-        self.__session.remove()
+        self.__session.close()
 
     def get_user(self, cls, email_address):
         """Retrieves a single object of the specified class and column value
@@ -291,3 +291,17 @@ class DBStorage:
         conn = self.__engine.connect()
         result = conn.execute(order_items)
         return result
+
+    def modify_order_status(self, order_number):
+        """Check and modify order status where necessary
+        """
+        self.reload()
+        order_to_update = self.__session.query(Order).filter_by(order_number=order_number).first()
+        if order_to_update:
+            order_to_update.is_served = 1
+            self.save()
+            self.close()
+            return 1
+        return 0
+        
+
