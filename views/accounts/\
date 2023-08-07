@@ -1,0 +1,44 @@
+#!/usr/bin/python3
+"""Defines all the routes for the accounts view"""
+
+from flask import Blueprint, render_template, request, flash, url_for, redirect, jsonify
+
+from models.accounts_models.ledger_groups import LedgerGroup
+
+from . storage_engine import account_storage
+
+# defining the accounts_views blueprint
+accounts_views = Blueprint('accounts_views', __name__,
+                            template_folder='templates',
+                            static_folder='static',
+                            url_prefix='/accounts')
+
+
+@accounts_views.route('/ledgerMaster', strict_slashes=False)
+def master_ledger():
+    """Returns the ledger mother template"""
+    """
+    group_name = "testGroup2"
+        description = "test"
+        nature_of_group = "asset"
+
+        new_group_dict = {"group_name": group_name, "description": description, "nature_of_group": nature_of_group}
+
+        new_group = LedgerGroup(**new_group_dict)
+        account_storage.new(new_group)
+        account_storage.save()
+
+        print(new_group)
+        return "SUccess..."
+    """
+    return render_template('ledger.html')
+
+@accounts_views.route('/addNewLedger', methods=['POST',], strict_slashes=False)
+def new_ledger():
+    if request.method == 'POST':
+        print(request.get_json())
+        return jsonify("Successful...")
+
+
+
+

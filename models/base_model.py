@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import uuid
 
+
 Base = declarative_base()
 time = "%d-%m-%YT%H:%M:%S.%f"
 

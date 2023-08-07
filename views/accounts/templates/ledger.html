@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="pt-2">
+	<div class="container py-2">
+		<h2 class="text-center">Ledger Management</h2>
+	</div>
+
+	<div class="py-2">
+		<!-- Button trigger modal Add Ledger -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addNewLedger">
+  		Add Ledger
+		</button>
+		<!-- Modal Add Ledger-->
+		<div class="modal fade" id="addNewLedger" tabindex="-1" aria-labelledby="addNewLedger" aria-hidden="true">
+  			<div class="modal-dialog">
+    				<div class="modal-content">
+      					<div class="modal-header">
+        					<h5 class="modal-title" id="exampleModalLabel">Create Ledger</h5>
+        					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      					</div>
+      					<div class="modal-body">
+						<form method="POST" action="{{ url_for('accounts_views.new_ledger') }}" id="add_new_ledger">
+							<div class="mb-3">
+  								<label for="account_no" class="form-label">Account No.</label>
+  								<input type="text" class="form-control" id="account_no" name="account_no" required>
+							</div>
+							<div class="mb-3">
+                                                                <label for="ledger_name" class="form-label">ledger Name</label>
+                                                                <input type="text" class="form-control" id="ledger_name" name="ledger_name" required>
+                                                        </div>
+							<div class="mb-3">
+                                                                <label for="account_group" class="form-label">Account Group</label>
+								<input class="form-control" list="datalistOptions" id="account_group" required>
+								<datalist id="datalistOptions">
+  									<option value="Accounts payable">
+  									<option value="Accounts receivable">
+  									<option value="Cash-in-hand">
+									<option value="Bank account">
+									<option value="Duties and taxes">
+									<option value="Mobile money(MPESA)">
+									<option value="Direct expenses">
+									<option value="Fixed assets">
+									<option value="Indirect expenses">
+									<option value="Direct income">
+									<option value="Indirect income">
+									<option value="Loans and advances(Asset)">
+									<option value="Loan(Liability)">
+									<option value="Misc Expenses">
+									<option value="Purchase accounts">
+									<option value="Inventory">
+								</datalist>
+                                                        </div>
+							<div class="input-group mb-3">
+  								<input type="text" class="form-control" placeholder="Opening Amount" aria-label="opening_amount" id="opening_amount" required>
+  								<span class="input-group-text">Dr/Cr</span>
+								<input class="form-control" list="dr_cr_options" id="dr_cr" required>
+                                                                <datalist id="dr_cr_options">
+                                                                        <option value="dr">
+                                                                        <option value="dr">
+                                                                </datalist>
+
+							</div>
+
+							<div class="modal-footer">
+								<button name="Btn" type="button submit" value="Submit" id="newLedgerForm"
+									class="btn btn-primary">Save</button>
+							</div>
+						</form>
+      					</div>
+    				</div>
+  			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

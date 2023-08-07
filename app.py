@@ -48,6 +48,7 @@ from views.delivery.routes import delivery_views
 from views.waiter.routes import waiter_views
 from views.table.routes import table_views
 from views.counter.routes import counter_views
+from views.accounts.routes import accounts_views
 
 # Handling login imports
 from flask_login import LoginManager
@@ -73,6 +74,7 @@ app.register_blueprint(delivery_views)
 app.register_blueprint(waiter_views)
 app.register_blueprint(table_views)
 app.register_blueprint(counter_views)
+app.register_blueprint(accounts_views)
 
 #Initializing the db
 storage.reload()
@@ -91,6 +93,6 @@ def load_user(user_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
 
     

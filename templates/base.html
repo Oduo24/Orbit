@@ -36,6 +36,18 @@
 	<li class="nav-item">
           <a class="nav-link text-white" href="{{ url_for('menu_views.all_inventory_items') }}" tabindex="-1">Inventory</a>
         </li>
+	<li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="accountsDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Accounts
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="accountsDropDown">
+            <li><a class="dropdown-item" href="{{ url_for('accounts_views.master_ledger') }}">Ledgers</a></li>
+            <li><a class="dropdown-item" href="#">Credit Note</a></li>
+            <li><a class="dropdown-item" href="#">Payments</a></li>
+	    <li><a class="dropdown-item" href="#">Receipts</a></li>
+	    <li><a class="dropdown-item" href="#">Debit Notes</a></li>
+          </ul>
+        </li>
       </ul>
       {% endif %}
       {% if current_user.is_authenticated %}
