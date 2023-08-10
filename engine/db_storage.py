@@ -17,7 +17,10 @@ from models.base_model import Base
 from models.counters import Counter
 from models.unique_number_gen import Unique_number
 from models.accounts_models.ledger_groups import LedgerGroup
-from models.accounts_models.ledgers import Ledger
+from models.accounts_models.ledgers import Ledger, Transaction, LedgerTransaction
+from models.purchases import GRN, GRNStockItem, Purchase, PurchaseStockItems, Supplier, StockItems
+from models.document_number import DocumentNumber
+
 
 classes = {"Category": Category, "MenuItem":MenuItem, "Uom":Uom, "User":User, "Order":Order,
         "Waiter":Waiter, "Payment":Payment, "Table":Table, "TenderType":TenderType, "Counter":Counter, "Unique_number": Unique_number,
@@ -306,4 +309,27 @@ class DBStorage:
             return 1
         return 0
         
+    def generate_document_number(self, doc_type):
+        """Generates new unique document number
+        """
+        self.reload()
+        document_number = self.__session.query(DocumentNumber).first()
 
+        if document_number:
+            new_number = document_number.last_number
+            document_number.last_number = document_number.last_number + 1
+        else:
+            new_number = 1
+        
+        self.__session.add(document_number)
+        self.__session.commit()
+        
+        return f"{doc_type}/{new_number}"
+    
+    def get_all_objects(self, cls):
+        """Retrieves all the objects of a class cls in the database
+        """
+        obj = self.__session.query(cls).all()
+        if obj:
+            return obj
+        return None

@@ -49,6 +49,8 @@ from views.waiter.routes import waiter_views
 from views.table.routes import table_views
 from views.counter.routes import counter_views
 from views.accounts.routes import accounts_views
+from views.purchase.routes import purchases_views
+
 
 # Handling login imports
 from flask_login import LoginManager
@@ -75,6 +77,8 @@ app.register_blueprint(waiter_views)
 app.register_blueprint(table_views)
 app.register_blueprint(counter_views)
 app.register_blueprint(accounts_views)
+app.register_blueprint(purchases_views)
+
 
 #Initializing the db
 storage.reload()

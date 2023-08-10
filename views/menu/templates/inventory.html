@@ -16,7 +16,10 @@
                         +Category
                 </button>
 		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#item_modal">
-                        +item
+                        +Menu Item
+                </button>
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#stock_item_modal">
+                        +Stock Item
                 </button>
 
 	</div>
@@ -140,6 +143,54 @@
                                                         </div>
 							<div class="text-end">
                                                                 <button type="button" class="btn btn-primary" id="submit_item_form">
+                                                                        Save</button>
+                                                        </div>
+                                                </form>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+
+	<div class="pt-1">
+                <!--Add Item Modal -->
+                <div class="modal fade" id="stock_item_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                                <div class="modal-content">
+                                        <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Add New Sock Item</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                                <form method="POST" action="{{ url_for('purchases_views.new_stock_item') }}"
+						id="add_stock_item_form">
+							<div class="mb-3">
+                                                                <label for="stock_item_name" class="form-label">Item Name</label>
+                                                                <input type="text" class="form-control" id="stock_item_name" name="stock_item_name">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                                <label for="part_no" class="form-label">Part No.</label>
+                                                                <input type="text" class="form-control" id="part_no" name="part_no">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                                <label for="item_description" class="form-label">Description</label>
+                                                                <input type="text" class="form-control" id="stock_item_description" name="stock_item_description">
+                                                        </div>
+							<div class="mb-3">
+                                                                <label for="item_uom" class="form-label">Select UOM</label>
+                                                                <select class="form-select" aria-label="Default select example"
+									name="item_uom" id="item_uom">
+									<option>pcs</option>
+									<option>kgs</option>
+									<option>litres</option>
+									<option>dozen</option>
+									<option>bars</option>
+									<option>boxes</option>
+									<option>ml</option>
+								</select>
+                                                        </div>
+							<div class="text-end">
+                                                                <button type="button" class="btn btn-primary" id="submit_stock_item_form">
                                                                         Save</button>
                                                         </div>
                                                 </form>
