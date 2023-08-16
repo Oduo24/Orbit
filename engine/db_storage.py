@@ -333,3 +333,14 @@ class DBStorage:
         if obj:
             return obj
         return None
+
+    def get_single_item_details(self, cls, item_name):
+        """Retrieves an item from the database given the class and item_name
+        """
+        self.reload()
+
+        obj = self.__session.query(cls).filter_by(item_name=item_name).first()
+        if obj:
+            return obj
+        return None
+   

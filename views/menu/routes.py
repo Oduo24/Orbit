@@ -6,6 +6,7 @@ from flask import Blueprint, render_template, request, flash, url_for, redirect
 # models imports
 from models.menu_items import MenuItem
 from models.uom import Uom
+from models.purchases import StockItems
 
 # python imports
 from datetime import datetime
@@ -47,13 +48,18 @@ def all_inventory_items():
     all_items = storage.get_menu_item()
     number_of_items = len(all_items)
 
+    stock_items = storage.get_all_objects(StockItems)
+    number_of_stock_items = len(stock_items)
+
 
     return render_template('inventory.html', all_uoms=all_uoms,
             all_categories = all_categories,
             length_of_category=length_of_category,
             all_items = all_items,
             number_of_items = number_of_items,
-            length_of_uom=length_of_uom)
+            length_of_uom=length_of_uom,
+            stock_items = stock_items,
+            number_of_stock_items = number_of_stock_items)
                                 
 
 
