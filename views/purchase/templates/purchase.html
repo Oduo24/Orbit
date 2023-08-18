@@ -52,7 +52,7 @@
 
 
 	<!-- New Grn off-cavas -->
-	<div class="offcanvas offcanvas-top" data-bs-scroll="true" tabindex="-1" id="grn_form" style="height: 70vh;"
+	<div class="offcanvas offcanvas-top" data-bs-scroll="true" tabindex="-1" id="grn_form" style="height: 95vh;"
 		aria-labelledby="offcanvasWithBothOptionsLabel">
 		<div class="offcanvas-header">
 			<h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">New GRN</h5>
@@ -96,7 +96,7 @@
                         	    <td><input type="number" class="form-control grn_item_quantity"></td>
 				    <td><input type="number" class="form-control grn_item_rate"></td>
 				    <td><input class="form-control grn_item_amount" disabled></td>
-				    <td><button type="button" class="btn btn-danger remove_grn_item">-</button></td>
+				    <td><h2 class="btn btn-danger remove_grn_item">-</h2></td>
                 		  </tr>
 
 				  <datalist id="stock_items_list">
@@ -108,13 +108,20 @@
                                 </tbody>
                        </table>
 		       <!-- End of table for item details -->
+		      		
+		       <div class="" id="">
+			       <button type="button" class="btn btn-success float-start" id="add_item_field">+</button>
 
-		       <button type="button" class="btn btn-success" id="add_item_field">+</button>
+                       </div>
 
-
-			<div class="text-center">
-                                <button type="button" class="btn btn-success finishButtonClick">Save</button>
-                        </div>
+		       <div class="row justify-content-center text-end pt-5">
+		       	 <div class="col-sm-6 col-md-8 d-grid gap-2">
+                                <button type="button" class="btn btn-lg btn-success finishButtonClick">Save</button>
+                         </div>
+		       <div class="col-sm-6 col-md-4">
+			       <h2 class="">Total: Ksh<span class="" id="grn_total_amount">25000</span></h2>
+		       </div>
+		      </div>
 		</form>
 	</div>
 </div>

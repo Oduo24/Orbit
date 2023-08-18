@@ -117,7 +117,7 @@ class StockItems(BaseModel, Base):
     item_name = Column(String(100), nullable=False)
     item_description = Column(String(100), nullable=True)
     base_unit = Column(Enum('pcs', 'dozen', 'bars', 'litres', 'boxes', 'kgs', 'ml'), nullable=False)
-    
+    quantity = Column(Integer, nullable=False) 
 
     def __init__(self, **kwargs):
         """Class constructor

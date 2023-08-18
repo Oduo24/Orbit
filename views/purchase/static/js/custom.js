@@ -45,17 +45,21 @@ document.querySelector('#add_item_field').addEventListener('click', event => {
         tableRow.appendChild(tableData);
 	
 	if (i == 6) {
-            const buttonElement = document.createElement("button");
-            buttonElement.classList.add("btn");
-            buttonElement.classList.add("btn-danger");
-            buttonElement.classList.add("remove_grn_item");
-            buttonElement.innerText = "-";
+	    // Creating h2 Element instead of a button but in the html it is styled as a button
+	    // This is to prevent the default submission that occurs when Enter is pressed on an input 
+	    // element
+            const h2Elem = document.createElement("h2");
+            h2Elem.classList.add("btn");
+            h2Elem.classList.add("btn-danger");
+            h2Elem.classList.add("remove_grn_item");
+            h2Elem.innerText = "-";
 
 	    // Removing formInput element
 	    tableData.removeChild(formInput);
+	    tableRow.removeChild(tableData);
 
             // Appending buttonElement to the tableData element
-            tableData.appendChild(buttonElement);
+            tableData.appendChild(h2Elem);
 
             // Appending tableData to tableRow
             tableRow.appendChild(tableData);
@@ -81,7 +85,7 @@ document.querySelector('#grnItemDetails').addEventListener('input', event => {
 });
 
 // Event listener for change in rate to update the item amount
-document.querySelector('#grnItemDetails').addEventListener('input', event => {
+document.querySelector('#grnItemDetails').addEventListener('input', event => { 
         const target = event.target;
    
         if (target.classList.contains('grn_item_rate')) {
@@ -135,5 +139,27 @@ async function retrieveItemDetails(itemName) {
 
 }
 
+
 // Event listener for removing an item in the grn list of items
+document.querySelector('#grnItemDetails').addEventListener('click', event => {
+	const target = event.target;
+
+
+	if (target.classList.contains('remove_grn_item')) {
+		const row = target.closest('tr');
+		row.remove();
+	}
+});
+
+
+// Event listener to update Total amount when item amount changes
+const total = 0;
+document.querySelectorAll('.grn_item_amount').forEach((elem) => {
+	elem.addEventListener('input', event => {
+	event.preventDefault();
+	console.log(event.target.value);
+	total = total + parseInt(event.target.value);
+	console.log(total);
+	});
+});
 
