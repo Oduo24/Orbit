@@ -63,11 +63,11 @@
 			<div class="input-group mb-3">
 				<input type="text" class="form-control" placeholder="GRN No.(SystemGen)" id="grn_no" disabled>
                                 <span class="input-group-text">Date</span>
-                                <input class="form-control" type="date" id="grn_date" required>
+                                <input class="form-control" type="date" id="grnDate" required>
                         </div>
 			<div class="mb-3">
                                 <label for="account_group" class="form-label">Supplier:</label>
-				<input class="form-control" list="supplierList" id="supplier_name" required>
+				<input class="form-control" list="supplierList" id="supplierName" required>
 				<datalist id="supplierList">
 					{% for supplier in suppliers %}
   						<option value="{{ supplier.supplier_name }}">
@@ -116,10 +116,10 @@
 
 		       <div class="row justify-content-center text-end pt-5">
 		       	 <div class="col-sm-6 col-md-8 d-grid gap-2">
-                                <button type="button" class="btn btn-lg btn-success finishButtonClick">Save</button>
+                                <button type="button" class="btn btn-lg btn-success" id="grnSaveBtn">Save</button>
                          </div>
 		       <div class="col-sm-6 col-md-4">
-			       <h2 class="">Total: Ksh<span class="" id="grn_total_amount">25000</span></h2>
+			       <h2 class="">Total: Ksh<span class="" id="grn_total_amount">0</span></h2>
 		       </div>
 		      </div>
 		</form>

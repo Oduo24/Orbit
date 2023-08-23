@@ -81,6 +81,7 @@ document.querySelector('#grnItemDetails').addEventListener('input', event => {
         	const quantity = parseInt(target.value);
 		const amount = rate * quantity;
         	row.querySelector('.grn_item_amount').value = amount;
+		updateTotal();
 		}
 });
 
@@ -94,6 +95,7 @@ document.querySelector('#grnItemDetails').addEventListener('input', event => {
         	const rate = parseInt(target.value);
         	const amount = rate * quantity;
         	row.querySelector('.grn_item_amount').value = amount;
+		updateTotal();
 		}
 });
 
@@ -148,18 +150,115 @@ document.querySelector('#grnItemDetails').addEventListener('click', event => {
 	if (target.classList.contains('remove_grn_item')) {
 		const row = target.closest('tr');
 		row.remove();
+		updateTotal();
 	}
 });
 
-
-// Event listener to update Total amount when item amount changes
-const total = 0;
-document.querySelectorAll('.grn_item_amount').forEach((elem) => {
-	elem.addEventListener('input', event => {
-	event.preventDefault();
-	console.log(event.target.value);
-	total = total + parseInt(event.target.value);
-	console.log(total);
+// Function that updates the grn total amount
+function updateTotal() {
+	let total = 0;
+	document.querySelectorAll('.grn_item_amount').forEach((elem) => {
+	const clonedElem = elem.cloneNode();
+	clonedElem.disabled = false;
+	total = total + parseInt(clonedElem.value);
+	
+	if (!isNaN(total)) {
+		// Update the total amount
+        	document.querySelector('#grn_total_amount').innerHTML = +total;
+	}
 	});
-});
+}
 
+// Event listener for submitting grn
+
+document.querySelector('#grnSaveBtn').addEventListener('click', selectAllGrnDetails);
+
+
+// Function that selects all grn details
+function selectAllGrnDetails(event) {
+	event.preventDefault();
+	let grnObj = {};
+	let itemsArray = [];
+
+	const supplier = document.querySelector('#supplierName').value;
+	const date = document.querySelector('#grnDate').value;
+	const total = document.querySelector('#grn_total_amount').innerHTML;
+	
+	const itemName = document.querySelectorAll('.grn_item_name');
+	const qty = document.querySelectorAll('.grn_item_quantity');
+	const rate =document.querySelectorAll('.grn_item_rate');
+	const amount = document.querySelectorAll('.grn_item_amount');
+
+
+	itemName.forEach((elem, index) => {		
+		let itemsObj = {};
+
+		itemsObj.name = elem.value;
+		itemsObj.quantity = qty[index].value;
+		itemsObj.rate = rate[index].value;
+
+		// Check if there is any empty value
+		const validity = hasEmptyValue(itemsObj);
+
+		if (!validity) {
+			itemsArray.push(itemsObj);
+		} else {
+			alert("empty values present");
+		}
+
+	});
+	// Add grn details to the grn object
+	grnObj.supplier = supplier;
+	grnObj.date = date;
+	grnObj.total = total;
+	grnObj.items = itemsArray;
+	
+	const grnValidity = hasEmptyValue(grnObj);
+	if (!grnValidity) {
+		// Post data to url
+		postJSON(grnObj);
+
+
+	} else {
+		alert("Missing Supplier Name or Date...");
+	}
+	
+}
+
+function hasEmptyValue(itemsObj) {
+	return Object.values(itemsObj).some(value => !value);
+}
+
+async function postJSON(obj) {
+	try {
+		const response = await fetch('/purchases/add_new_grn', {
+			method: 'POST',
+			headers: {
+        			"Content-Type": "application/json",
+      				},
+			body: JSON.stringify(obj),
+		});
+
+		const result = await response.json();
+
+		// Removing details on the browser after successful storage
+		removeBrowserElements();
+	
+		alert(`${result}`);
+
+		
+
+	} catch (error) {
+		alert(`Error: ${error}`);
+	}
+}
+
+function removeBrowserElements() {
+	tableBody.querySelectorAll('tr').forEach((row) => {
+		row.remove();
+	});
+	document.querySelector('#grn_total_amount').innerHTML = 0;
+	document.querySelector('#supplierName').value = '';
+        document.querySelector('#grnDate').value = '';
+
+}

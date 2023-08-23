@@ -31,6 +31,7 @@ class GRNStockItem(Base):
     __tablename__ = 'grn_stockitems'
 
     quantity = Column(Integer, nullable=False)
+    rate = Column(Integer, nullable=False)
     amount = Column(Integer, nullable=False)
 
     # Foreign keys to link to grns and stock_items table

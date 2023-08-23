@@ -68,6 +68,11 @@ class DBStorage:
         self.reload()
         self.__session.add(obj)
 
+    def new_modified(self, obj):
+        """Adds a new object to the current db session - modified without internal reload
+        """
+        self.__session.add(obj)
+
     def save(self):
         """Commits all changes of the current db session
         """
@@ -343,4 +348,23 @@ class DBStorage:
         if obj:
             return obj
         return None
-   
+    
+    def get_single_grn_id(self, cls, grn_no):
+        """Retrieves id from the database given the class and grn_no
+        """
+        self.reload()
+
+        obj = self.__session.query(cls).filter_by(grn_no=grn_no).first()
+        if obj:
+            return obj
+        return None
+
+    def get_stock_item_id(self, cls, item_name):
+        """Retrieves id from the database given the class and stock item name
+        """
+        self.reload()
+
+        obj = self.__session.query(cls).filter_by(item_name=item_name).first()
+        if obj:
+            return obj
+        return None
