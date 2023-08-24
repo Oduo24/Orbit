@@ -54,49 +54,55 @@ def add_new_grn():
     """Creates a new grn and save to database"""
     if request.method == 'POST':
         data = request.get_json()
-        print(data)
 
         # Generate GRN document number
         grn_no = storage.generate_document_number('GRN')
-        print(grn_no)
 
         if validate_date(data["date"]):
             cleaned_data = validate_items(data)
-            print(cleaned_data)
-            # Create grn
-            grn_details = {"grn_no": grn_no, "amount": cleaned_data["total"], "supplier_name": cleaned_data["supplier"]}
-            grn_object = GRN(**grn_details)
-            storage.reload()
-            storage.new_modified(grn_object)
-            storage.save()
-            # Adding grn items
-            grn_id = storage.get_single_grn_id(GRN, grn_no).id # Obtained the specific grn id that will be associated with the items
-            #grn_id = grn_object.id
 
-            # Obtaining item ids
-            for item in cleaned_data["items"]:
-                grn_item_details = {}
-                # Get id of the particular item
-                stock_item_id = storage.get_stock_item_id(StockItems, item["name"]).id
+            try:
+                # Create grn
+                grn_details = {"grn_no": grn_no, "amount": cleaned_data["total"], "supplier_name": cleaned_data["supplier"]}
+                grn_object = GRN(**grn_details)
 
-                quantity = int(item["quantity"])
-                rate = int(item["rate"])
-                amount = int(item["amount"])
-                
-                # Add to the dictionary with item details
-                grn_item_details["quantity"] = quantity
-                grn_item_details["rate"] = rate
-                grn_item_details["amount"] = amount
-                grn_item_details["grn_id"] = grn_id
-                grn_item_details["stock_item_id"] = stock_item_id
-                
-                grn_item_obj = GRNStockItem(**grn_item_details)
-                storage.new_modified(grn_item_obj)
+                storage.reload()
+
+                # Adding grn items
+                grn_id = grn_object.id
+
+                items_list = []
+                for item in cleaned_data["items"]:
+                    grn_item_details = {}
+                    # Get id of the particular item
+                    stock_item_id = storage.get_stock_item_id(StockItems, item["name"]).id
+
+                    quantity = int(item["quantity"])
+                    rate = int(item["rate"])
+                    amount = int(item["amount"])
+                    
+                    # Add to the dictionary with item details
+                    grn_item_details["quantity"] = quantity
+                    grn_item_details["rate"] = rate
+                    grn_item_details["amount"] = amount
+                    grn_item_details["grn_id"] = grn_id
+                    grn_item_details["stock_item_id"] = stock_item_id
+                    
+                    grn_item_obj = GRNStockItem(**grn_item_details)
+                    items_list.append(grn_item_obj)
+
+                grn_object.items.extend(items_list)
+                storage.new_modified(grn_object)
                 storage.save()
+
+
+            except Exception as e:
+                storage.rollback()
+                storage.close()
+                return jsonify(str(e))
+
             storage.close()
-
-
-            return jsonify("GRN saved...")
+            return jsonify(f"GRN saved\nGRN No. {grn_no}")
         else:
             return jsonify("Backdated Entry...")
 

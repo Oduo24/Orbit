@@ -73,10 +73,32 @@ class DBStorage:
         """
         self.__session.add(obj)
 
+    def __enter__(self):
+        """Enter context: Begin a transaction"""
+        self.reload()
+        self.__session.begin()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Exit context: Commit or rollback the transaction"""
+        if exc_type is not None:
+            self.rollback()
+        else:
+            self.save()
+        self.close()
+
     def save(self):
         """Commits all changes of the current db session
         """
         self.__session.commit()
+
+    def rollback(self):
+        """ROlls back the changes in a particular session
+        """
+        self.__session.rollback()
+
+    def savepoint1(self):
+        self.__session.begin_nested()
 
     def delete(self, obj = None):
         """Deletes an object from the current db session if obj is not none
