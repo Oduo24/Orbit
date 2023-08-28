@@ -77,9 +77,9 @@ document.querySelector('#grnItemDetails').addEventListener('input', event => {
 
 	if (target.classList.contains('grn_item_quantity')) {
         	const row = target.closest('tr'); // Find the closest <tr> element
-        	const rate = parseFloat(row.querySelector('.grn_item_rate').value);
+        	const rate = parseInt(row.querySelector('.grn_item_rate').value);
         	const quantity = parseInt(target.value);
-		const amount = rate * quantity;
+		const amount = checkNegative(rate * quantity);
         	row.querySelector('.grn_item_amount').value = amount;
 		updateTotal();
 		}
@@ -93,7 +93,7 @@ document.querySelector('#grnItemDetails').addEventListener('input', event => {
         	const row = target.closest('tr'); // Find the closest <tr> element
         	const quantity = parseFloat(row.querySelector('.grn_item_quantity').value);
         	const rate = parseInt(target.value);
-        	const amount = rate * quantity;
+        	const amount = checkNegative(rate * quantity);
         	row.querySelector('.grn_item_amount').value = amount;
 		updateTotal();
 		}
@@ -161,6 +161,7 @@ function updateTotal() {
 	const clonedElem = elem.cloneNode();
 	clonedElem.disabled = false;
 	total = total + parseInt(clonedElem.value);
+	total = checkNegative(total)
 	
 	if (!isNaN(total)) {
 		// Update the total amount
@@ -182,6 +183,7 @@ function selectAllGrnDetails(event) {
 
 	const supplier = document.querySelector('#supplierName').value;
 	const date = document.querySelector('#grnDate').value;
+	const reference_no = document.querySelector('#grnRef').value;
 	const total = document.querySelector('#grn_total_amount').innerHTML;
 	
 	const itemName = document.querySelectorAll('.grn_item_name');
@@ -194,8 +196,9 @@ function selectAllGrnDetails(event) {
 		let itemsObj = {};
 
 		itemsObj.name = elem.value;
-		itemsObj.quantity = qty[index].value;
-		itemsObj.rate = rate[index].value;
+
+		itemsObj.quantity = checkNegative(qty[index].value);
+		itemsObj.rate = checkNegative(rate[index].value);
 
 		// Check if there is any empty value
 		const validity = hasEmptyValue(itemsObj);
@@ -210,6 +213,7 @@ function selectAllGrnDetails(event) {
 	// Add grn details to the grn object
 	grnObj.supplier = supplier;
 	grnObj.date = date;
+	grnObj.reference_no = reference_no; 
 	grnObj.total = total;
 	grnObj.items = itemsArray;
 	
@@ -220,13 +224,24 @@ function selectAllGrnDetails(event) {
 
 
 	} else {
-		alert("Missing Supplier Name or Date...");
+		alert("Missing Supplier Name, ref, or Date...");
 	}
 	
 }
 
 function hasEmptyValue(itemsObj) {
 	return Object.values(itemsObj).some(value => !value);
+}
+
+function checkNegative(number) {
+	number = parseInt(number);
+	if (number < 0) {
+		return number * -1;
+	} else if (number === 0) {
+		alert("Invalid zero values");
+	} else {
+		return number;
+	}
 }
 
 async function postJSON(obj) {
@@ -240,11 +255,17 @@ async function postJSON(obj) {
 		});
 
 		const result = await response.json();
+		console.log(response);
 
-		// Removing details on the browser after successful storage
-		removeBrowserElements();
+		if (!response.ok) {
+			alert(`${result}`);
+		} else {
+			// Removing details on the browser after successful storage
+			removeBrowserElements();
 	
-		alert(`${result}`);
+			alert(`${result}`);
+		}
+
 
 		
 
@@ -260,5 +281,94 @@ function removeBrowserElements() {
 	document.querySelector('#grn_total_amount').innerHTML = 0;
 	document.querySelector('#supplierName').value = '';
         document.querySelector('#grnDate').value = '';
+	document.querySelector('#grnRef').value = '';
+}
+
+// Adding click event listener on the view grn button
+document.querySelectorAll('.viewGrn').forEach((elem) => {
+	elem.addEventListener('click', event => {
+		event.preventDefault;
+		const grn_no = elem.getAttribute('id');
+		
+		// Fetching items for the particular grn number
+		getGrnItems(grn_no);
+	});
+});
+
+// Function that retrieves the grn items of a given GRN number
+async function getGrnItems(grn_no) {
+	try {
+		const response = await fetch('/purchases/grn_details', {
+		method: 'POST',
+		headers: {
+                            "Content-Type": "application/json",
+                         },
+                body: JSON.stringify(grn_no),
+		});
+
+		if (!response.ok) {
+			const result = await response.json();
+			alert(result.error);
+		} else {
+			const result = await response.json();
+
+			// Call the function that dislpays the items
+			diplayGrnItems(result.items, result.grn_no, result.supplier, result.grn_total);
+		}
+	} catch (error) {
+		alert(`Error: ${error}`);
+	
+	}
 
 }
+
+
+// Function that displays the grn items on the browser
+function diplayGrnItems(result, grnNo, supplier, grn_total) {
+	const table = document.querySelector('#grnDetail');
+
+	// Create table row element
+
+
+	result.forEach((item, index) => {
+
+		const tableRow = document.createElement('tr');
+		tableRow.setAttribute('id', `${item.part_no}`);
+
+		for (let i=0; i<6; i++) {
+			const td = document.createElement('td');
+			const inputTag = document.createElement('input');
+			inputTag.classList.add('form-control');
+			inputTag.setAttribute('disabled', null);
+
+			if (i===0) {
+				inputTag.value = item.item_name;
+			} else if (i===1) {
+				inputTag.value = item.part_no;
+			} else if (i===2) {
+				inputTag.value = item.uom;
+			} else if (i===3) {
+				inputTag.value = item.quantity;
+			} else if (i===4) {
+				inputTag.value = item.rate;
+			} else if (i===5) {
+				inputTag.value = item.amount;
+			}
+
+			td.appendChild(inputTag);
+			tableRow.appendChild(td);
+		}
+		table.appendChild(tableRow);
+	});
+	// Set the grn_no, total amount, supplier name, ref_no
+	document.querySelector('#grnNumberDisplay').innerText = `${grnNo} - ${supplier}`;
+	// Settting total amount
+	document.querySelector('#grnTotal').innerText = `Ksh ${grn_total}`;
+}
+
+// Clearing the off-Canvas body when the off-Canvas is closed
+document.querySelector('#close').addEventListener('click', event => {
+	event.preventDefault();
+	// Clear the content of the off-canvas body
+	document.querySelector('#grnDetail').innerHTML = '';
+});

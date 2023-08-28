@@ -42,11 +42,15 @@ def get_all_purchases():
     try:
         stock_items = storage.get_all_objects(StockItems)
         suppliers = storage.get_all_objects(Supplier)
+        grns = storage.get_all_objects(GRN)
+        number_of_grns = len(grns)
     except Exception as e:
-        flash("Error: Could not retrieve suppliers from the db")
+        flash(str(e))
         return render_template('purchase.html')
 
     return render_template('purchase.html', suppliers=suppliers,
+                                            grns=grns,
+                                            number_of_grns=number_of_grns,
                                             stock_items=stock_items)
 
 @purchases_views.route('/add_new_grn', methods=['GET', 'POST',], strict_slashes=False)
@@ -63,7 +67,11 @@ def add_new_grn():
 
             try:
                 # Create grn
-                grn_details = {"grn_no": grn_no, "amount": cleaned_data["total"], "supplier_name": cleaned_data["supplier"]}
+                grn_details = { "grn_no": grn_no, 
+                                "amount": cleaned_data["total"], 
+                                "supplier_name": cleaned_data["supplier"], 
+                                "reference_no": cleaned_data["reference_no"]
+                                }
                 grn_object = GRN(**grn_details)
 
                 storage.reload()
@@ -95,20 +103,25 @@ def add_new_grn():
                 storage.new_modified(grn_object)
                 storage.save()
 
-
+            except IntegrityError as ie:
+                storage.rollback()
+                storage.close()
+                return jsonify("Error: Possible duplicate entry of item name."), 500
             except Exception as e:
                 storage.rollback()
                 storage.close()
-                return jsonify(str(e))
+                return jsonify(str(e) + "\n Potentially an invalid item name has been entered."), 500
 
             storage.close()
-            return jsonify(f"GRN saved\nGRN No. {grn_no}")
+            return jsonify(f"GRN saved\nGRN No. {grn_no}"), 200
         else:
             return jsonify("Backdated Entry...")
 
 
 def validate_date(date):
     """Validates the entered date
+       I have removed the functionality of this function since every grn has its automatic
+       creation date as an object in the model, hence it returns True for each case
     """
     # Convert into a python date object
     user_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
@@ -117,7 +130,7 @@ def validate_date(date):
     # Check for backdated entry
     if user_date >= current_date:
         return True
-    return False
+    return True
 
 def validate_items(data):
     """Function calculates the total per item and quantity and the overal total
@@ -146,4 +159,48 @@ def item_name_details():
             return jsonify({"itemPartNo": item_details.part_no, "itemBaseUnit": item_details.base_unit})
         else:
             return jsonify("Select Item Name...")
+
+
+@purchases_views.route('/grn_details', methods=['GET', 'POST'], strict_slashes=False)
+def grn_details():
+    """Retrieves the details of a particular grn number"""
+    if request.method == "POST":
+        try:
+            grn_no = request.get_json()
+            grn = storage.get_single_grn_id(GRN, grn_no)
+            items = grn.items
+            grn_details = {}
+
+            all_items = []
+            for item in items:
+                item_dict = {}
+
+                # append quantity, rate and amount to item_dict
+                item_dict["quantity"] = item.quantity
+                item_dict["amount"] = item.amount
+                item_dict["rate"] = item.rate
+
+                # Get the stock item id
+                item_id = item.stock_item_id
+                stock_item = storage.get_item_by_id(item_id)
+
+                # Appending the item part_no, itemname and uom
+                item_dict["item_name"] = stock_item.item_name
+                item_dict["part_no"] = stock_item.part_no
+                item_dict["uom"] =  stock_item.base_unit
+
+                # Appending to the all_items list
+                all_items.append(item_dict)
+
+            grn_details["items"] = all_items
+            grn_details["grn_total"] = grn.amount
+            grn_details["supplier"] = grn.supplier_name
+            grn_details["ref_no"] = grn.reference_no
+            grn_details["grn_no"] = grn.grn_no
+            # Close session
+
+        except Exception as e:
+            return jsonify({"error": "Could not retrieve data from the db."}), 500
+
+        return jsonify(grn_details), 200
 

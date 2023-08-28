@@ -377,6 +377,7 @@ class DBStorage:
         self.reload()
 
         obj = self.__session.query(cls).filter_by(grn_no=grn_no).first()
+    
         if obj:
             return obj
         return None
@@ -387,6 +388,14 @@ class DBStorage:
         self.reload()
 
         obj = self.__session.query(cls).filter_by(item_name=item_name).first()
+        if obj:
+            return obj
+        return None
+
+    def get_item_by_id(self, item_id):
+        """Retrieves only the item_name and UOM given the item_id
+        """
+        obj = self.__session.query(StockItems).filter_by(id=item_id).with_entities(StockItems.part_no, StockItems.item_name, StockItems.base_unit).first()
         if obj:
             return obj
         return None

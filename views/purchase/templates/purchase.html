@@ -24,24 +24,36 @@
 		<tr>
 		<th scope="col"></th>
 		<th scope="col">Date</th>
+		<th scope="col">Ref.</th>
 		<th scope="col">GRN no.</th>
       		<th scope="col">Supplier Name</th>
-		<th scope="col">Amount</th>
+		<th scope="col">Amount(Ksh)</th>
+		<th scope="col"></th>
     		</tr>
 	</thead>
 	<tbody>
-		<!--for loop tag for purchases in the db-->
+		<!--for loop tag for purchase grns in the db-->
+		{% for grn in grns %}
 		<tr>
 			<th scope="row"></th>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td>{{grn.created_at.strftime('%d/%m/%Y')}}</td>
+			<td>{{grn.reference_no}}</td>
+			<td>{{grn.grn_no}}</td>
+			<td>{{grn.supplier_name}}</td>
+			<td>{{grn.amount}}</td>
+			<td><button class="btn btn-success viewGrn btn-sm" data-bs-toggle="offcanvas" id="{{grn.grn_no}}"
+                                        data-bs-target="#grn-details" aria-controls="offcanvasWithBothOptions">
+                                        View
+                            </button>
+                        </td>
 		</tr>
 		<!--End for loop tag-->
+		{% endfor %}
 		<tr>
 			<th scope="row"></th>
-			<td scope="row"><b>Total = </b></td>
+			<td scope="row"><b>Total = {{number_of_grns}} </b></td>
+			<td></td>
+			<td></td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -65,9 +77,10 @@
                                 <span class="input-group-text">Date</span>
                                 <input class="form-control" type="date" id="grnDate" required>
                         </div>
-			<div class="mb-3">
-                                <label for="account_group" class="form-label">Supplier:</label>
-				<input class="form-control" list="supplierList" id="supplierName" required>
+			<div class=" input-group mb-3">
+				<input class="form-control" list="supplierList" id="supplierName" placeholder="Supplier" required>
+				<span class="input-group-text">Ref</span>
+				<input class="form-control" type="text" id="grnRef" required>
 				<datalist id="supplierList">
 					{% for supplier in suppliers %}
   						<option value="{{ supplier.supplier_name }}">
@@ -124,6 +137,40 @@
 		      </div>
 		</form>
 	</div>
+</div>
+
+<!-- Grn details -->
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="grn-details" data-bs-backdrop="false" style="width: 75%;"
+                aria-labelledby="offcanvasWithBothOptionsLabel">
+                <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">GRN Details</h5>
+                        <button type="button" class="btn-close text-reset" id="close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                <h1 class="fw-lighter" id="grnNumberDisplay"></h1>
+                        <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Item Name</th>
+				    <th scope="col">Part No.</th>
+				    <th scope="col">UOM</th>
+                                    <th scope="col">Quantity</th>
+				    <th scope="col">Rate(Ksh)</th>
+                                    <th scope="col">Amount(Ksh)</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="grnDetail">
+
+
+                                </tbody>
+                       </table>
+		<div class="text-end">
+                        <h1 class="form-control fs-3 p-2" id="grnTotal">0</h1>
+                </div>
+                <div class="text-center pt-2">
+                        <button type="button" class="btn btn-success">Edit</button>
+                </div>
+                </div>
 </div>
 
 {% endblock %}

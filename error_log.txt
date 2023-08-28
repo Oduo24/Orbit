@@ -1,0 +1,32 @@
+2023-08-25 18:45:19,652 - INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.88.247:5001
+2023-08-25 18:45:19,652 - INFO: [33mPress CTRL+C to quit[0m
+2023-08-25 18:45:19,654 - INFO:  * Restarting with stat
+2023-08-25 18:45:20,444 - WARNING:  * Debugger is active!
+2023-08-25 18:45:20,445 - INFO:  * Debugger PIN: 712-663-836
+2023-08-25 18:45:43,946 - INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.88.247:5001
+2023-08-25 18:45:43,946 - INFO: [33mPress CTRL+C to quit[0m
+2023-08-25 18:45:43,948 - INFO:  * Restarting with stat
+2023-08-25 18:45:44,760 - WARNING:  * Debugger is active!
+2023-08-25 18:45:44,761 - INFO:  * Debugger PIN: 712-663-836
+2023-08-25 18:46:06,342 - INFO: 127.0.0.1 - - [25/Aug/2023 18:46:06] "GET /purchases/purchases_master_template HTTP/1.1" 200 -
+2023-08-25 18:46:06,388 - INFO: 127.0.0.1 - - [25/Aug/2023 18:46:06] "GET /purchases/static/js/custom.js HTTP/1.1" 200 -
+2023-08-25 18:46:06,496 - INFO: 127.0.0.1 - - [25/Aug/2023 18:46:06] "GET /purchases/static/css/custom.css HTTP/1.1" 200 -
+2023-08-25 18:46:09,509 - INFO: 127.0.0.1 - - [25/Aug/2023 18:46:09] "GET /favicon.ico HTTP/1.1" 200 -
+2023-08-25 18:46:16,591 - ERROR: An error occurred in the view: 'NoneType' object has no attribute 'rgdrbbvg'
+2023-08-25 18:46:16,592 - INFO: 127.0.0.1 - - [25/Aug/2023 18:46:16] "[35m[1mPOST /purchases/grn_details HTTP/1.1[0m" 500 -
+2023-08-25 18:46:39,210 - INFO:  * Detected change in '/home/gerald/orbit/orbit_project/app.py', reloading
+2023-08-25 18:46:39,381 - INFO:  * Restarting with stat
+2023-08-25 18:46:40,236 - WARNING:  * Debugger is active!
+2023-08-25 18:46:40,237 - INFO:  * Debugger PIN: 712-663-836
+2023-08-25 18:49:33,623 - INFO:  * Detected change in '/home/gerald/orbit/orbit_project/views/purchase/routes.py', reloading
+2023-08-25 18:49:33,788 - INFO:  * Restarting with stat
+2023-08-25 18:50:34,332 - INFO:  * Restarting with stat
+2023-08-25 18:56:35,021 - INFO:  * Restarting with stat
+2023-08-25 18:57:52,001 - INFO:  * Restarting with stat
+2023-08-25 18:58:30,244 - INFO:  * Restarting with stat

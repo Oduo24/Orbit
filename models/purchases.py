@@ -13,6 +13,7 @@ class GRN(BaseModel, Base):
     grn_no = Column(String(100), nullable=False)
     amount = Column(Integer, nullable=False)
     supplier_name = Column(String(100), ForeignKey("suppliers.supplier_name"), nullable=False)
+    reference_no = Column(String(100), default=0, nullable=False)
 
     # One to many relationship between grn and suppliers table
     supplier = relationship('Supplier', back_populates='grns')

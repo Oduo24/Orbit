@@ -64,6 +64,7 @@ app = Flask(__name__)
 app.secret_key = "1234567890qwertyuiopasdfghjklzxcvbnm"
 
 
+
 """Registering blueprints"""
 app.register_blueprint(standard_views)
 app.register_blueprint(menu_views)
