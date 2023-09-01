@@ -9,6 +9,7 @@
 
 	<div class="py-2" id="purchases_icons">
 		<a class="btn btn-success" href="#grn_form" role="button" data-bs-toggle="offcanvas">+GRN</a>
+		<a class="btn btn-success" href="#invoice_form" role="button" data-bs-toggle="offcanvas">+Invoice</a>
 	</div>
 
 	{% with messages = get_flashed_messages() %}
@@ -18,6 +19,10 @@
 		</div>
 	    {% endif %}
 	{% endwith %}
+	
+	<div class="container py-2">
+                <h3 class="text-center">Goods Receipt Notes</h3>
+        </div>
 
 	<table class="table table-dark">
 	<thead>
@@ -61,6 +66,46 @@
 	</tbody>
  
 	</table>
+
+	<!-- Invoices -->
+	<div class="container py-2">
+                <h3 class="text-center">Purchase Invoices</h3>
+        </div>
+
+	<table class="table table-dark">
+        <thead>
+                <tr>
+                <th scope="col"></th>
+                <th scope="col">Date</th>
+                <th scope="col">Invoice No.</th>
+                <th scope="col">Supplier Invoice</th>
+		<th scope="col">Supplier</th>
+		<th scope="col">Narration</th>
+                </tr>
+        </thead>
+        <tbody>
+                {% for inv in purchase_invoices %}
+                <tr>
+                        <th scope="row"></th>
+			<td>{{inv.created_at.strftime('%d/%m/%Y')}}</td>
+			<td>{{inv.invoice_no}}</td>
+                        <td>{{inv.reference_no}}</td>
+			<td>{{inv.supplier_name}}</td>
+			<td>{{inv.narration}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                        <th scope="row"></th>
+                        <td scope="row"><b>Total = {{ number_of_invoices }}</b></td>
+                        <td></td>
+                        <td></td>
+			<td></td>
+			<td></td>
+                </tr>
+        </tbody>
+
+        </table>
+
 
 
 	<!-- New Grn off-cavas -->
@@ -172,5 +217,75 @@
                 </div>
                 </div>
 </div>
+
+
+<!-- Add invoice off-cavas -->
+	<div class="offcanvas offcanvas-top" data-bs-scroll="true" tabindex="-1" id="invoice_form" style="height: 95vh;"
+		aria-labelledby="offcanvasWithBothOptionsLabel">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">New Invoice</h5>
+			<button type="button" class="btn-close text-reset" id="closeInv" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body">
+		<form method="POST" action="" id="">
+			<div class=" input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Inv No.(SystemGen)" id="inv_no" disabled>
+                                <span class="input-group-text">Supplier Invoice Date</span>
+                                <input class="form-control" type="date" id="supplierInvDate" required>
+                        </div>
+			<div class="input-group mb-3">
+				<input class="form-control" list="supplierList" id="nameOfSupplier" placeholder="Supplier" required>
+				<datalist id="supplierList">
+                                        {% for supplier in suppliers %}
+                                                <option value="{{ supplier.supplier_name }}">
+                                        {% endfor %}
+                                </datalist>
+                                <span class="input-group-text">Supplier Invoice No.</span>
+                                <input class="form-control" type="text" id="invRef" required>
+                        </div>
+			<div class=" input-group mb-5">
+				<input type="text" class="form-control" list="grnList" placeholder="GRN No." id="grnNo">
+				<datalist id="grnList">
+
+                                </datalist>
+				<span class="input-group-text">Narration:</span>
+				<input class="form-control" type="text" id="invNarration" required>
+                        </div>
+			<div class=" input-group mb-4">
+				<button class="btn btn-outline-success" type="button" id="LoadGrnData">Load</button>
+                        </div>
+
+			<!-- Table for item details -->
+			<table class="table">
+				<thead>
+                                  <tr>
+                                    <th scope="col">Part No.</th>
+                                    <th scope="col">Item Name</th>
+                                    <th scope="col">Unit</th>
+				    <th scope="col">Qty</th>
+				    <th scope="col">Rate(Ksh)</th>
+				    <th scope="col">Amount(Ksh)</th>
+				    <th scope="col"></th>
+                                  </tr>
+                                </thead>
+				<tbody id="invDetails">
+
+
+				</tbody>
+                       </table>
+		       <!-- End of table for invoice item details -->
+		      		
+
+		       <div class="row justify-content-center text-end pt-5">
+		       	 <div class="col-sm-6 col-md-8 d-grid gap-2">
+                                <button type="button" class="btn btn-lg btn-success" id="invoiceSaveBtn">Save</button>
+                         </div>
+		       <div class="col-sm-6 col-md-4">
+			       <h2 class="">Total: Ksh<span class="" id="invoice_total_amount">0</span></h2>
+		       </div>
+		      </div>
+		</form>
+	</div>
+
 
 {% endblock %}

@@ -5,8 +5,10 @@ let orderDetailsBtn = document.querySelectorAll('.orderDetails')
 orderDetailsBtn.forEach((detailBtn) => {
   detailBtn.addEventListener('click', (ev) => {
     ev.preventDefault();
-    //let orderNumber = detailBtn.parentElement.previousElementSibling.previousElementSibling
-//		  .previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
+
+    // Clearing all item details in the dom before loading new ones
+    document.querySelector('#orderItemDetails').innerHTML = '';
+    
     let orderNumber = detailBtn.closest('tr').querySelector('.order_number').textContent 
     	  
     let xhr = new XMLHttpRequest();

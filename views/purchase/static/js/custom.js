@@ -372,3 +372,200 @@ document.querySelector('#close').addEventListener('click', event => {
 	// Clear the content of the off-canvas body
 	document.querySelector('#grnDetail').innerHTML = '';
 });
+
+
+// Event listener for change in supplier name in supplier invoice form
+document.querySelector('#nameOfSupplier').addEventListener('change', async function (event) {
+	event.preventDefault();
+	const supplierName = event.target.value;
+
+	// Clear the previous option elements in the dom before appending new ones
+	document.querySelector('#grnList')
+
+	try {
+                const response = await fetch('/purchases/pending_grns', {
+			method: 'POST',
+			headers: {
+				    "Content-Type": "application/json",
+				 },
+			body: JSON.stringify(supplierName),
+			});
+
+                if (!response.ok) {
+                        const result = await response.json();
+                        alert(result.error);
+                } else {
+                        const result = await response.json();
+			
+			// Setting the datalist of grns to be selected
+			result.forEach((grn) => {
+				const optionElement = document.createElement('option');
+				optionElement.setAttribute("value", grn);
+
+				// Appending the optionElement to the dom
+				document.querySelector('#grnList').appendChild(optionElement);
+			});
+
+                }
+        } catch (error) {
+                alert(`Error: ${error}`);
+
+        }
+});
+
+// Event listener to load grn items
+document.querySelector('#LoadGrnData').addEventListener('click', event => {
+	event.preventDefault();
+	const grnNumber = document.querySelector('#grnNo').value;
+	getInvItems(grnNumber);
+
+});
+
+// Function that retrieves the grn items of a given GRN number
+async function getInvItems(grn_no) {
+        try {
+                const response = await fetch('/purchases/grn_details', {
+                method: 'POST',
+                headers: {
+                            "Content-Type": "application/json",
+                         },
+                body: JSON.stringify(grn_no),
+                });
+
+                if (!response.ok) {
+                        const result = await response.json();
+                        alert(result.error);
+                } else {
+                        const result = await response.json();
+
+                        // Call the function that dislpays the items
+                        diplayInvItems(result.items, result.grn_no, result.supplier, result.grn_total);
+                }
+        } catch (error) {
+                alert(`Error: ${error}`);
+
+        }
+
+}
+
+// Function that displays the grn items on the browser
+function diplayInvItems(result, grnNo, supplier, grn_total) {
+	const table = document.querySelector('#invDetails');
+
+	// Remove any items before appending new ones
+	table.innerHTML = '';
+
+
+	result.forEach((item, index) => {
+
+		const tableRow = document.createElement('tr');
+		tableRow.setAttribute('id', `${item.part_no}`);
+
+		for (let i=0; i<6; i++) {
+			const td = document.createElement('td');
+			const inputTag = document.createElement('input');
+			inputTag.classList.add('form-control');
+			inputTag.setAttribute('disabled', null);
+
+			if (i===0) {
+				inputTag.value = item.item_name;
+			} else if (i===1) {
+				inputTag.value = item.part_no;
+			} else if (i===2) {
+				inputTag.value = item.uom;
+			} else if (i===3) {
+				inputTag.value = item.quantity;
+			} else if (i===4) {
+				inputTag.value = item.rate;
+			} else if (i===5) {
+				inputTag.value = item.amount;
+			}
+
+			td.appendChild(inputTag);
+			tableRow.appendChild(td);
+		}
+		table.appendChild(tableRow);
+	});
+	document.querySelector('#invoice_total_amount').innerText = `Ksh ${grn_total}`;
+}
+
+
+
+// Event listener for save invoice
+document.querySelector('#invoiceSaveBtn').addEventListener('click', async function (event) {
+	event.preventDefault();
+	const grnNumber = document.querySelector('#grnNo').value;
+	const suplierInvNumber = document.querySelector('#invRef').value;
+	const supplierInvDate = document.querySelector('#supplierInvDate').value;
+	const narration = document.querySelector('#invNarration').value;
+
+	const invDetails = {
+		GRN_No: grnNumber,
+		Supplier_Invoice_No: suplierInvNumber,
+		Supplier_Invoice_Date: supplierInvDate,
+		narration: narration
+	};
+	// Check for null values
+	const emptyValues = checkMissing(invDetails);
+	if (emptyValues.length === 0) {
+		// Post the invoice details which returns the created invoice number 
+		// postData takes the url and the data to be posted
+		const result = await postData(invDetails, '/purchases/new_invoice');
+		clearInvDetails();
+		alert(`${result}`);
+		
+	} else {
+		alert(`Missing values:\n ${emptyValues}`);
+	}
+
+});
+
+// Function that checks for missing form details
+function checkMissing(invDetails) {
+	// Append a slash at the end of narration to ensure it's not returned as empty
+	// This means narration can be missing without throwing a missing value alert
+	invDetails.narration = invDetails.narration + '/';
+	const emptyValues = [];
+	for (let prop in invDetails) {
+		if (!invDetails[prop]) {
+			emptyValues.push(prop);
+		}
+	}
+	return emptyValues;
+}
+
+// Post data function
+async function postData(data, url) {
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+                            "Content-Type": "application/json",
+                         },
+			body: JSON.stringify(data)
+		});
+
+		const result = await response.json();
+
+		if (response.ok) {
+			return result;
+		} else {
+			alert(result.error);
+		}
+	}
+	catch (error) {
+		alert(`${error}`);
+	}
+}
+
+// Clear invoice details
+function clearInvDetails() {
+        document.querySelector('#invDetails').innerHTML = '';
+        document.querySelector('#grnList').innerHTML = '';
+        document.querySelector('#supplierInvDate').value = '';
+        document.querySelector('#nameOfSupplier').value = '';
+        document.querySelector('#invRef').value = '';
+        document.querySelector('#grnNo').value = '';
+        document.querySelector('#invNarration').value = '';
+        document.querySelector('#invoice_total_amount').innerText = 0;
+}

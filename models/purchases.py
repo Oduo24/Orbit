@@ -2,7 +2,7 @@
 """This module defines the leder class. Every created ledger is defined by this class"""
 
 from models.base_model import BaseModel, Base
-from sqlalchemy import String, Column, Integer, ForeignKey, DateTime, Table, Date, Enum, Index
+from sqlalchemy import String, Column, Integer, ForeignKey, DateTime, Table, Date, Enum, Index, Boolean
 from sqlalchemy.orm import relationship
 
 
@@ -14,6 +14,7 @@ class GRN(BaseModel, Base):
     amount = Column(Integer, nullable=False)
     supplier_name = Column(String(100), ForeignKey("suppliers.supplier_name"), nullable=False)
     reference_no = Column(String(100), default=0, nullable=False)
+    is_invoiced = Column(Boolean, default=False)
 
     # One to many relationship between grn and suppliers table
     supplier = relationship('Supplier', back_populates='grns')
@@ -47,41 +48,24 @@ class GRNStockItem(Base):
 
 
 
-class Purchase(BaseModel, Base):
-    """Defines the Purchase transactions class"""
-    __tablename__ = 'purchases'
+class PurchaseInvoice(BaseModel, Base):
+    """Defines the Purchase invoice class"""
+    __tablename__ = 'purchase_invoice'
 
-    transaction_no = Column(String(100), nullable=False)
-    grn_no = Column(String(100), ForeignKey('grns.id'), nullable=False)
-    amount = Column(Integer, nullable=False)
-    supplier_name = Column(String(100), ForeignKey("suppliers.supplier_name"), nullable=False)
+    invoice_no = Column(String(100), nullable=False)
+    supplier_invoice_date = Column(Date)
+    grn_no = Column(String(100), ForeignKey('grns.id'), unique=True, nullable=False)
+    supplier_name = Column(String(100), ForeignKey('suppliers.supplier_name'), nullable=False)
+    reference_no = Column(String(100), default=0, nullable=False)
+    narration = Column(String(250), nullable=True)
 
-    # 1:N relationship between supplier and purchases
-    supplier = relationship('Supplier', back_populates='purchase')
-
-    # 1: N relationship between purchases and the association table purchases_stockitems
-    items = relationship('PurchaseStockItems', back_populates='purchase')
+    supplier = relationship('Supplier', back_populates='purchase_invoices')
 
     def __init__(self, **kwargs):
         """Class constructor
         """
         super().__init__(**kwargs)
 
-
-class PurchaseStockItems(Base):
-    """Association table between  purchases and stockitems"""
-    __tablename__ = 'purchases_stockitems'
-
-    quantity = Column(Integer, nullable=False)
-    amount = Column(Integer, nullable=False)
-
-    # Foreign keys to link to stockitems and purchases
-    purchase_id = Column(String(100), ForeignKey("purchases.id"), primary_key=True)
-    stockitems_id = Column(String(100), ForeignKey("stock_items.id"))
-
-    # Relationship from purchases_stockitems to purchases and stock_items
-    purchase = relationship('Purchase', back_populates='items')
-    stock_item = relationship('StockItems')
 
 
 
@@ -93,10 +77,11 @@ class Supplier(BaseModel, Base):
     supplier_name = Column(String(100), nullable=False, unique=True)
     contact = Column(String(100), nullable=True)
 
-    # Relationship with Purchase transactions
-    purchase= relationship('Purchase', back_populates='supplier')
     dr = Column(Integer, nullable=True)
     cr = Column(Integer, nullable=True)
+
+    # Relationship with Purchase invoice transactions
+    purchase_invoices = relationship('PurchaseInvoice', back_populates='supplier')
 
     # Relationship with GRN
     grns = relationship('GRN', back_populates='supplier')

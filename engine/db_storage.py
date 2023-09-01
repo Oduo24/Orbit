@@ -18,7 +18,7 @@ from models.counters import Counter
 from models.unique_number_gen import Unique_number
 from models.accounts_models.ledger_groups import LedgerGroup
 from models.accounts_models.ledgers import Ledger, Transaction, LedgerTransaction
-from models.purchases import GRN, GRNStockItem, Purchase, PurchaseStockItems, Supplier, StockItems
+from models.purchases import GRN, GRNStockItem, PurchaseInvoice, Supplier, StockItems
 from models.document_number import DocumentNumber
 
 
@@ -356,7 +356,7 @@ class DBStorage:
     def get_all_objects(self, cls):
         """Retrieves all the objects of a class cls in the database
         """
-        obj = self.__session.query(cls).all()
+        obj = self.__session.query(cls).order_by(cls.created_at.desc()).all()
         if obj:
             return obj
         return None
@@ -399,3 +399,12 @@ class DBStorage:
         if obj:
             return obj
         return None
+
+    def get_pending_grns(self, supplier_name):
+        """Retrieves pending grns of the supplier supplier_name
+        """
+        obj = self.__session.query(GRN).filter_by(supplier_name=supplier_name).filter(GRN.is_invoiced==False).with_entities(GRN.grn_no).all()
+        if obj:
+            return obj
+        return None
+

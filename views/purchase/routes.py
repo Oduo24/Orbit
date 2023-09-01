@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, flash, url_for, redirect,
 
 from sqlalchemy.exc import IntegrityError
 
-from models.purchases import GRN, GRNStockItem, Purchase, PurchaseStockItems, Supplier, StockItems
+from models.purchases import GRN, GRNStockItem, PurchaseInvoice, Supplier, StockItems
 
 from models import storage
 
@@ -43,6 +43,7 @@ def get_all_purchases():
         stock_items = storage.get_all_objects(StockItems)
         suppliers = storage.get_all_objects(Supplier)
         grns = storage.get_all_objects(GRN)
+        purchase_invoices = storage.get_all_objects(PurchaseInvoice)
         number_of_grns = len(grns)
     except Exception as e:
         flash(str(e))
@@ -51,7 +52,9 @@ def get_all_purchases():
     return render_template('purchase.html', suppliers=suppliers,
                                             grns=grns,
                                             number_of_grns=number_of_grns,
-                                            stock_items=stock_items)
+                                            stock_items=stock_items,
+                                            purchase_invoices=purchase_invoices,
+                                            number_of_invoices=len(purchase_invoices))
 
 @purchases_views.route('/add_new_grn', methods=['GET', 'POST',], strict_slashes=False)
 def add_new_grn():
@@ -113,7 +116,7 @@ def add_new_grn():
                 return jsonify(str(e) + "\n Potentially an invalid item name has been entered."), 500
 
             storage.close()
-            return jsonify(f"GRN saved\nGRN No. {grn_no}"), 200
+            return jsonify(f"SUCCESS>\nGRN No. {grn_no} saved."), 200
         else:
             return jsonify("Backdated Entry...")
 
@@ -200,7 +203,71 @@ def grn_details():
             # Close session
 
         except Exception as e:
-            return jsonify({"error": "Could not retrieve data from the db."}), 500
+            return jsonify({"error": f"Could not retrieve data from the db.\n {e}"}), 500
 
         return jsonify(grn_details), 200
 
+@purchases_views.route('/pending_grns', methods=['GET', 'POST'], strict_slashes=False)
+def pending_grns():
+    """
+    Function that returns pending grns(grns of the supplier that have not been invoiced)
+    """
+    if request.method == 'POST':
+
+        try:
+            supplier_name = request.get_json()
+            
+            # Get session
+            storage.reload()
+
+            grns = storage.get_pending_grns(supplier_name)
+            grns_list = [grn.grn_no for grn in grns]
+
+            return jsonify(grns_list), 200
+
+            # Close session
+            storage.close()
+
+        except Exception as e:
+            return jsonify({"error": f"Could not retrieve pending grns from the db.\n {e}"}), 500
+
+@purchases_views.route('/new_invoice', methods=['GET', 'POST'], strict_slashes=False)
+def new_invoice():
+    """
+    Creates and saves new grn
+    """
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+
+            #purchase invoice object details
+            invoice_no = storage.generate_document_number('INV')
+            grn = storage.get_single_grn_id(GRN, data["GRN_No"])
+            grn_id = grn.id
+            supplier_name = grn.supplier_name
+
+            purchase_invoice_details = {
+                    "invoice_no": invoice_no,
+                    "supplier_invoice_date": data["Supplier_Invoice_Date"],
+                    "grn_no": grn_id,
+                    "supplier_name": supplier_name,
+                    "supplier_invoice_no": data["Supplier_Invoice_No"],
+                    "narration": data["narration"]
+                    }
+            new_invoice = PurchaseInvoice(**purchase_invoice_details)
+            # Mark grn as already invoiced
+            grn.is_invoiced = True
+
+            #storage.reload()
+            storage.new_modified(new_invoice)
+            storage.new_modified(grn)
+
+
+        except Exception as e:
+            storage.rollback()
+            storage.close()
+            return jsonify({"error": f"Could not create a new invoice. \n {e}"}), 500
+
+        storage.save()
+        storage.close()
+        return jsonify(f"SUCCESS. \n Invoice number {invoice_no} created."), 200
