@@ -20,7 +20,6 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-	{% if current_user.is_authenticated %}
 	<li class="nav-item">
           <a class="nav-link text-white" aria-current="page" href="{{ url_for('table_views.get_all_tables') }}">Table Manager</a>
         </li>
@@ -52,23 +51,9 @@
           </ul>
         </li>
       </ul>
-      {% endif %}
-      {% if current_user.is_authenticated %}
       <div class="d-flex">
-        <a href="{{ url_for('auth_views.logout') }}" class="btn btn-success">Logout</a>
+        <a href="" class="btn btn-success">Logout</a>
       </div>
-      {% endif %}
-      {% if not current_user.is_authenticated %}
-      <li class="nav-item">
-          <a class="nav-link text-white" href="#product-features" tabindex="-1">Features</a>
-        </li>
-	<li class="nav-item">
-          <a class="nav-link text-white" href="#" tabindex="-1">About</a>
-        </li>
-	<li class="nav-item">
-          <a class="nav-link text-white" href="#" tabindex="-1">Contact Us</a>
-        </li>
-      {% endif %}
     </div>
   </div>
 </nav>

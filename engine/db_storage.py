@@ -35,15 +35,15 @@ class DBStorage:
     def __init__(self):
         """Class constructor, instantiates a DBStorage object
         """
-        os.environ['MYSQL_USER'] = 'gerald'
+        os.environ['MYSQL_USER'] = 'root'
         os.environ['MYSQL_PWD'] = 'ruphinee'
         os.environ['MYSQL_DB'] = 'orbit_db'
-        os.environ['MYSQL_HOST'] = 'localhost'
+        os.environ['unix_socket'] = 'orbitrum-398113:us-central1:myorbit'
 
 
         MYSQL_USER = os.getenv("MYSQL_USER")
         MYSQL_PWD = os.getenv("MYSQL_PWD")
-        MYSQL_HOST = os.getenv("MYSQL_HOST")
+        MYSQL_HOST = os.getenv("unix_socket")
         MYSQL_DB = os.getenv("MYSQL_DB")
 
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB),

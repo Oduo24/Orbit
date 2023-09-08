@@ -9,11 +9,9 @@
 				<div class="display-2"> Orbit</div>
 				<div class="display-5 text-muted">Cloud Restaurant Management System</div>
 			</h1>
-			{% if not current_user.is_authenticated %}
 			<div class="my-2">
-				<a href="{{ url_for('auth_views.login') }}" class="btn btn-success">Login</a>
+				<a href="" class="btn btn-success">Login</a>
 			</div>
-			{% endif %}
 		</div>
 		<div class="col-md-6 text-center">
 			<img class="img-fluid" src="static/images/rest4.png" alt="restaurant">
