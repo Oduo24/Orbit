@@ -41,9 +41,9 @@ class DBStorage:
         #os.environ['HOST'] = 'localhost'
 
 
-        MYSQL_USER = 'gerald'
+        MYSQL_USER = 'root'
         MYSQL_PWD = 'ruphinee'
-        MYSQL_HOST = 'mysql_orbit'
+        MYSQL_HOST = '23.251.157.49'
         MYSQL_DB = 'orbit_db'
 
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB),
