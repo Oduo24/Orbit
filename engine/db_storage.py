@@ -35,16 +35,16 @@ class DBStorage:
     def __init__(self):
         """Class constructor, instantiates a DBStorage object
         """
-        os.environ['MYSQL_USER'] = 'root'
-        os.environ['MYSQL_PWD'] = 'ruphinee'
-        os.environ['MYSQL_DB'] = 'orbit_db'
-        os.environ['unix_socket'] = 'orbitrum-398113:us-central1:myorbit'
+        #os.environ['MYSQL_USER'] = 'gerald'
+        #os.environ['MYSQL_PWD'] = 'ruphinee'
+        #os.environ['MYSQL_DB'] = 'orbit_db'
+        #os.environ['HOST'] = 'localhost'
 
 
-        MYSQL_USER = os.getenv("MYSQL_USER")
-        MYSQL_PWD = os.getenv("MYSQL_PWD")
-        MYSQL_HOST = os.getenv("unix_socket")
-        MYSQL_DB = os.getenv("MYSQL_DB")
+        MYSQL_USER = 'gerald'
+        MYSQL_PWD = 'ruphinee'
+        MYSQL_HOST = 'mysql_orbit'
+        MYSQL_DB = 'orbit_db'
 
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB),
                 pool_size=100, max_overflow=0)
@@ -110,7 +110,7 @@ class DBStorage:
         """Reloads data from the db
         """
         Base.metadata.create_all(self.__engine)
-        sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False, autoflush=False)
         Session = scoped_session(sess_factory)
         self.__session = Session()
 
@@ -307,8 +307,8 @@ class DBStorage:
         unserved_orders = self.__session.query(Order).filter(Order.isPaid == "False").order_by(Order.created_at.desc()).all()
        
        # changing the date format to dd/mm/yyyy
-        for order in unserved_orders:
-            order.created_at = order.created_at.strftime('%d/%m/%Y')
+        #for order in unserved_orders:
+            #order.created_at = order.created_at.strftime('%d/%m/%Y')
 
         if unserved_orders:
             return unserved_orders

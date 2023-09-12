@@ -46,7 +46,8 @@ def get_all_purchases():
         purchase_invoices = storage.get_all_objects(PurchaseInvoice)
         number_of_grns = len(grns)
     except Exception as e:
-        flash(str(e))
+        storage.rollback()
+        storage.close()
         return render_template('purchase.html')
 
     return render_template('purchase.html', suppliers=suppliers,

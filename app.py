@@ -63,7 +63,8 @@ app = Flask(__name__)
 # secret key for session
 app.secret_key = "1234567890qwertyuiopasdfghjklzxcvbnm"
 
-
+# Configure Jinja2 to ignore undefined variables
+# app.jinja_env.undefined = 'silent'
 
 """Registering blueprints"""
 app.register_blueprint(standard_views)
@@ -84,6 +85,7 @@ app.register_blueprint(purchases_views)
 #Initializing the db
 storage.reload()
 storage.save()
+storage.close()
 
 # Initializing login_manager
 login_manager = LoginManager()
@@ -95,6 +97,8 @@ def load_user(user_id):
     """since the user_id is just the primary key of our user table, we use it in the query for the user
     """
     return storage.get_user_session(user_id)
+
+
 
 
 if __name__ == '__main__':

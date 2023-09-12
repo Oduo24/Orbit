@@ -45,11 +45,15 @@ order_views = Blueprint('order_views', __name__,
 @order_views.route('/all-orders', strict_slashes=False)
 def get_all_orders():
     """returns all the orders in the system"""
-    all_orders = storage.get_all_orders()
-    if all_orders:
-        number_of_orders = len(all_orders)
-        return render_template('order.html', all_orders=all_orders, number_of_orders=number_of_orders)
-
+    try:
+        all_orders = storage.get_all_orders()
+        if all_orders:
+            number_of_orders = len(all_orders)
+            return render_template('order.html', all_orders=all_orders, number_of_orders=number_of_orders)
+    except Exception as e:
+        storage.rollback()
+        storage.close()
+        return render_template('order.html',)
 @order_views.route('/counter-order', methods=['GET','POST'], strict_slashes=False)
 def make_counter_order():
     if request.method == 'POST':

@@ -32,8 +32,15 @@ kot_views = Blueprint('kot_views', __name__,
 def get_all_kot():
     """Retrieve all the orders in the database that have not been served
     """
-    orders = storage.get_unserved_orders()
-    number_of_orders = len(orders)
+    try:
+        orders = storage.get_unserved_orders()
+        number_of_orders = len(orders)
+
+    except Exception as e:
+        print(e)
+        storage.rollback()
+        storage.close()
+        return render_template('kot.html',)
 
     return render_template('kot.html', orders=orders, number_of_orders=number_of_orders)
 
@@ -45,13 +52,18 @@ def get_order_items():
         data = int(request.get_json())
 
         # Select all the items that belong to the order number 'data'
-        order_items = storage.get_order_items(data)
-        items_list = []
-        for row in order_items:
-            items_list.append(row[order_menuitem.c.item_name])
-            items_list.append(row[order_menuitem.c.quantity])
-            items_list.append(row[order_menuitem.c.amount])
-        return jsonify(items_list)
+        try:
+            order_items = storage.get_order_items(data)
+            items_list = []
+            for row in order_items:
+                items_list.append(row[order_menuitem.c.item_name])
+                items_list.append(row[order_menuitem.c.quantity])
+                items_list.append(row[order_menuitem.c.amount])
+            return jsonify(items_list)
+        except Exception as e:
+            storage.rollback()
+            storage.close()
+            return render_template('kot.html',)
 
 @kot_views.route('/order-status', methods=["GET", "POST"], strict_slashes=False)
 def check_modify_order_status():
