@@ -24,7 +24,7 @@ from engine.db_storage import classes, DBStorage
 from models.categories import Category
 from models.menu_items import MenuItem
 from models.uom import Uom
-from models.payments import Payment
+#from models.payments import Payment
 from models.orders import Order
 from models.waiters import Waiter
 from models.tables import Table
@@ -32,6 +32,7 @@ from models.tender_types import TenderType
 from models.users import User
 from models.counters import Counter
 from models.unique_number_gen import Unique_number
+from models.customers import Customer
 
 """flask imports"""
 from flask import Flask
@@ -50,6 +51,7 @@ from views.table.routes import table_views
 from views.counter.routes import counter_views
 from views.accounts.routes import accounts_views
 from views.purchase.routes import purchases_views
+from views.sales.routes import sales_views
 
 
 # Handling login imports
@@ -80,6 +82,7 @@ app.register_blueprint(table_views)
 app.register_blueprint(counter_views)
 app.register_blueprint(accounts_views)
 app.register_blueprint(purchases_views)
+app.register_blueprint(sales_views)
 
 
 #Initializing the db

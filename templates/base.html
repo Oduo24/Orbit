@@ -43,9 +43,9 @@
             Accounts
           </a>
           <ul class="dropdown-menu" aria-labelledby="accountsDropDown">
-            <li><a class="dropdown-item" href="{{ url_for('accounts_views.master_ledger') }}">Ledgers</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('accounts_views.master_account') }}">New</a></li>
             <li><a class="dropdown-item" href="#">Credit Note</a></li>
-            <li><a class="dropdown-item" href="#">Payments</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('accounts_views.payment') }}">Payments</a></li>
 	    <li><a class="dropdown-item" href="#">Receipts</a></li>
 	    <li><a class="dropdown-item" href="#">Debit Notes</a></li>
           </ul>

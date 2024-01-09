@@ -12,3 +12,4 @@ from views.kot import routes
 from views.table import routes
 from views.counter import routes
 from views.accounts import routes
+from views.sales import routes

@@ -54,6 +54,7 @@ def get_all_orders():
         storage.rollback()
         storage.close()
         return render_template('order.html',)
+    
 @order_views.route('/counter-order', methods=['GET','POST'], strict_slashes=False)
 def make_counter_order():
     if request.method == 'POST':
@@ -167,4 +168,6 @@ def save_order_items(data, order_number):
 
         # Create an instance of an order item
         storage.create_order_item_inst(order_number, item, quantity, amount)
+
+
 

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="pt-2">
+	<div class="container py-2">
+		<!-- New Credit sale off-cavas -->
+	<div class="container" data-bs-scroll="true" tabindex="-1" id="credit_sale_form" style="height: 95vh;"
+	aria-labelledby="offcanvasWithBothOptionsLabel">
+	<div class="offcanvas-header">
+		<h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">New Sale</h5>
+		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+	</div>
+	<div class="offcanvas-body">
+	<form method="POST" action="" id="add_new_ledger">
+		<div class="input-group mb-3">
+			<input type="text" class="form-control" placeholder="Invoice No.(SystemGen)" id="grn_no" disabled>
+				<span class="input-group-text">Date</span>
+				<input class="form-control" type="date" id="grnDate" required>
+		</div>
+		<div class=" input-group mb-3">
+			<input class="form-control" list="customerList" id="supplierName" placeholder="Invoice To" required>
+			<span class="input-group-text">Narration</span>
+			<input class="form-control" type="text" id="grnRef" required>
+			<datalist id="customerList">
+				{% for customer in customers %}
+					  <option value="{{ customer.customer_name }}">
+				{% endfor %}
+			</datalist>
+		</div>
+
+		<!-- Table for item details -->
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">Part No.</th>
+					<th scope="col">Item Name</th>
+					<th scope="col">Unit</th>
+					<th scope="col">Avail Qty</th>
+					<th scope="col">Qty</th>
+					<th scope="col">Rate(Ksh)</th>
+					<th scope="col">Amount(Ksh)</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody id="salesInvItemDetails">
+			  <tr>
+				<td><input class="form-control sale_item_part_no" disabled></td>
+				<td><input class="form-control sale_item_name" list="stock_items_list"></td>
+				<datalist id="stock_items_list">
+					{% for item in stock_items %}
+							<option value="{{ item.item_name }}">
+					{% endfor %}
+				  </datalist>
+				<td><input class="form-control sale_item_unit" disabled></td>
+				<td><input type="text" class="form-control avail_item_quantity" disabled></td>
+				<td><input type="number" class="form-control sale_quantity"></td>
+				<td><input type="number" class="form-control sale_item_rate" disabled></td>
+				<td><input class="form-control sale_item_amount" disabled></td>
+				<td><h2 class="btn btn-danger remove_sale_item">-</h2></td>
+			  </tr>
+
+			  
+
+			</tbody>
+		</table>
+		<!-- End of table for item details -->
+				  
+		   <div class="" id="">
+			   <button type="button" class="btn btn-success float-start" id="add_item_field">+</button>
+			</div>
+
+		   <div class="row justify-content-center text-end pt-5">
+				<div class="col-sm-6 col-md-8 d-grid gap-2">
+				<button type="button" class="btn btn-lg btn-success" id="grnSaveBtn">Save</button>
+			</div>
+		   <div class="col-sm-6 col-md-4">
+			   <h2 class="">Total: Ksh<span class="" id="sale_total_amount">0</span></h2>
+		   </div>
+		  </div>
+	</form>
+</div>
+	</div>
+</div>
+
+{% endblock %}

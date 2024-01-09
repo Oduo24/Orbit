@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request, flash, url_for, redirect,
 from sqlalchemy.exc import IntegrityError
 
 from models.purchases import GRN, GRNStockItem, PurchaseInvoice, Supplier, StockItems
+from models.accounts_models.accounts import Account, Transaction
 
 from models import storage
 
@@ -63,6 +64,7 @@ def add_new_grn():
     if request.method == 'POST':
         data = request.get_json()
 
+        storage.reload()
         # Generate GRN document number
         grn_no = storage.generate_document_number('GRN')
 
@@ -78,30 +80,29 @@ def add_new_grn():
                                 }
                 grn_object = GRN(**grn_details)
 
-                storage.reload()
-
-                # Adding grn items
-                grn_id = grn_object.id
-
                 items_list = []
+                print(cleaned_data["items"])
                 for item in cleaned_data["items"]:
                     grn_item_details = {}
                     # Get id of the particular item
-                    stock_item_id = storage.get_stock_item_id(StockItems, item["name"]).id
-
-                    quantity = int(item["quantity"])
-                    rate = int(item["rate"])
-                    amount = int(item["amount"])
+                    stockItem = storage.get_stock_item_by_id(StockItems, item["name"])
                     
                     # Add to the dictionary with item details
-                    grn_item_details["quantity"] = quantity
-                    grn_item_details["rate"] = rate
-                    grn_item_details["amount"] = amount
-                    grn_item_details["grn_id"] = grn_id
-                    grn_item_details["stock_item_id"] = stock_item_id
+                    grn_item_details["quantity"] = int(item["quantity"])
+                    grn_item_details["rate"] = int(item["rate"])
+                    grn_item_details["amount"] = int(item["amount"])
+                    grn_item_details["grn_id"] = grn_object.id
+                    grn_item_details["stock_item_id"] = stockItem.id
                     
                     grn_item_obj = GRNStockItem(**grn_item_details)
                     items_list.append(grn_item_obj)
+
+                    # Increament the stock quantity of each item
+                    stockItem.quantity += int(grn_item_details["quantity"])
+                    storage.new_modified(stockItem)
+                    
+                
+                    print(stockItem.quantity, stockItem.item_name)
 
                 grn_object.items.extend(items_list)
                 storage.new_modified(grn_object)
@@ -252,7 +253,7 @@ def new_invoice():
                     "supplier_invoice_date": data["Supplier_Invoice_Date"],
                     "grn_no": grn_id,
                     "supplier_name": supplier_name,
-                    "supplier_invoice_no": data["Supplier_Invoice_No"],
+                    "reference_no": data["Supplier_Invoice_No"],
                     "narration": data["narration"]
                     }
             new_invoice = PurchaseInvoice(**purchase_invoice_details)
@@ -263,7 +264,30 @@ def new_invoice():
             storage.new_modified(new_invoice)
             storage.new_modified(grn)
 
+            # Handle transaction
+            # Accounts involved are accounts payable and inventory account dr inventory and cr accounts payable
+            # accounts are inventory, payables
+            inventory_account = storage.get_account("Inventory")
+            payables_account = storage.get_account("Payables")
 
+            transaction_details = {
+                    "supplier": supplier_name,
+                    "transaction_number": invoice_no,
+                    "amount": grn.amount,
+                    "dr": inventory_account.id,
+                    "cr": payables_account.id,
+                    }
+            new_transaction = Transaction(**transaction_details)
+
+            # append the accounts related to this transaction
+            new_transaction.accounts.append(inventory_account)
+            new_transaction.accounts.append(payables_account)
+            storage.new_modified(new_transaction)
+
+            # update the supplier account balance
+            supplier = storage.get_supplier(supplier_name)
+            supplier.balance = supplier.balance + int(grn.amount)
+            storage.new_modified(supplier)
         except Exception as e:
             storage.rollback()
             storage.close()

@@ -1,19 +1,4 @@
-/*
-const items = document.getElementsByClassName("item-name");
-const prices = document.getElementsByClassName('item-price');
 
-const itemsName = [].map.call(items, item => item.innerHTML);
-const itemsPrice = [].map.call(prices, price => price.innerHTML);
-let itemsObj = {};
-
-itemsName.forEach((name, index) => {
-	let key = name
-	let value = itemsPrice[index]
-	let newItem = {}
-	newItem[key] = value
-	Object.assign(itemsObj, newItem);
-});
-*/
 const items = document.getElementsByClassName("item-name");
 const itemsName = [].map.call(items, item => item.innerHTML);
 
@@ -349,8 +334,3 @@ finalPayBtn.addEventListener('click', (ev) => {
   }
  });
 
-
-// Item search event
-//document.querySelector('#item-search').addEventListener('keyup', function() {
-
-//}

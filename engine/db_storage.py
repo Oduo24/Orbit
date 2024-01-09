@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Defines the db storage methods. ie interacts with the database to create, delete, modify, query objects"""
 import os
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, desc
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.categories import Category
 from models.menu_items import MenuItem
@@ -9,21 +9,21 @@ from models.uom import Uom
 from models.users import User
 from models.orders import Order, order_menuitem
 from models.waiters import Waiter
-from models.payments import Payment
+#from models.payments import Payment
 from models.tables import Table
 from models.users import User
 from models.tender_types import TenderType
 from models.base_model import Base
 from models.counters import Counter
 from models.unique_number_gen import Unique_number
-from models.accounts_models.ledger_groups import LedgerGroup
-from models.accounts_models.ledgers import Ledger, Transaction, LedgerTransaction
-from models.purchases import GRN, GRNStockItem, PurchaseInvoice, Supplier, StockItems
+from models.accounts_models.accounts_group import AccountGroup
+from models.accounts_models.accounts import Account, Transaction, AccountTransaction
+from models.purchases import GRN, GRNStockItem, PurchaseInvoice, Supplier, StockItems, PurchasePayment
 from models.document_number import DocumentNumber
 
 
 classes = {"Category": Category, "MenuItem":MenuItem, "Uom":Uom, "User":User, "Order":Order,
-        "Waiter":Waiter, "Payment":Payment, "Table":Table, "TenderType":TenderType, "Counter":Counter, "Unique_number": Unique_number,
+        "Waiter":Waiter, "Table":Table, "TenderType":TenderType, "Counter":Counter, "Unique_number": Unique_number,
         }
 
 class DBStorage:
@@ -41,9 +41,9 @@ class DBStorage:
         #os.environ['HOST'] = 'localhost'
 
 
-        MYSQL_USER = 'root'
+        MYSQL_USER = 'gerald'
         MYSQL_PWD = 'ruphinee'
-        MYSQL_HOST = '23.251.157.49'
+        MYSQL_HOST = 'localhost'
         MYSQL_DB = 'orbit_db'
 
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB),
@@ -404,6 +404,46 @@ class DBStorage:
         """Retrieves pending grns of the supplier supplier_name
         """
         obj = self.__session.query(GRN).filter_by(supplier_name=supplier_name).filter(GRN.is_invoiced==False).with_entities(GRN.grn_no).all()
+        if obj:
+            return obj
+        return None
+
+    def get_stock_item_by_id(self, cls, item_name):
+        """Retrieves the item from the database given the class and stock item name
+        """
+        obj = self.__session.query(cls).filter_by(item_name=item_name).first()
+        if obj:
+            return obj
+        return None
+    
+    def get_all_paying_accounts(self):
+        """Retrieve all the accounts under the account groups Cash-in-hand, Bank accounts and Mobile money(MPESA)
+        """
+        self.reload()
+        obj = self.__session.query(Account).filter(Account.group_name.in_(['Cash-in-hand', 'Bank account', 'Mobile money(MPESA)'])).with_entities(Account.account_name).all()
+        if obj:
+            return obj
+        self.close()
+        return None
+    
+    def get_account(self, account_name):
+        """Retrieves the ID of inventory account"""
+        obj = self.__session.query(Account).filter_by(account_name=account_name).first()
+        if obj:
+            return obj
+        return None
+    
+    def get_supplier(self, supplier_name):
+        """Retriev a particular supplier by supplier name"""
+        obj = self.__session.query(Supplier).filter_by(supplier_name=supplier_name).first()
+        if obj:
+            return obj
+        return None
+
+
+    def get_last_payment(self, supplier):
+        """Retrieve the last payment made by the supplier"""
+        obj = self.__session.query(Transaction).filter_by(supplier=supplier).order_by(desc(Transaction.created_at)).first()
         if obj:
             return obj
         return None

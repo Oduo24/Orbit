@@ -10,6 +10,7 @@
 	<div class="py-2" id="order_icons">
 		<a class="btn btn-success" href="#" role="button">Orders</a>
 		<a class="btn btn-success" href="{{ url_for('order_views.make_counter_order') }}" role="button">Counter</a>
+		<a class="btn btn-success" href="{{ url_for('sales_views.make_credit_sale') }}" role="button">Credit Sale</a>
 	</div>
 
 	{% with messages = get_flashed_messages() %}
@@ -59,6 +60,7 @@
 	</tbody>
  
 	</table>
+
 </div>
 
 {% endblock %}

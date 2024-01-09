@@ -59,6 +59,7 @@ def get_order_items():
                 items_list.append(row[order_menuitem.c.item_name])
                 items_list.append(row[order_menuitem.c.quantity])
                 items_list.append(row[order_menuitem.c.amount])
+
             return jsonify(items_list)
         except Exception as e:
             storage.rollback()

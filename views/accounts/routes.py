@@ -5,9 +5,11 @@ from flask import Blueprint, render_template, request, flash, url_for, redirect,
 
 from sqlalchemy.exc import IntegrityError
 
-from models.accounts_models.ledger_groups import LedgerGroup
-from models.accounts_models.ledgers import Ledger
+from datetime import datetime
 
+from models.accounts_models.accounts_group import AccountGroup
+from models.accounts_models.accounts import Account, Transaction
+from models.purchases import Supplier
 from models import storage
 
 # defining the accounts_views blueprint
@@ -17,9 +19,9 @@ accounts_views = Blueprint('accounts_views', __name__,
                             url_prefix='/accounts')
 
 
-@accounts_views.route('/ledgerMaster', strict_slashes=False)
-def master_ledger():
-    """Returns the ledger mother template"""
+@accounts_views.route('/AccountMaster', strict_slashes=False)
+def master_account():
+    """Returns the Account mother template"""
     """
     group_name = "testGroup2"
         description = "test"
@@ -34,44 +36,125 @@ def master_ledger():
         print(new_group)
         return "SUccess..."
     """
-    return render_template('ledger.html')
+    return render_template('accounts.html')
 
-@accounts_views.route('/addNewLedger', methods=['POST',], strict_slashes=False)
-def new_ledger():
-    """Adds a new ledger to the database
+@accounts_views.route('/addNewAccount', methods=['POST',], strict_slashes=False)
+def new_account(): #means new_account
+    """Adds a new account to the database
     """
     if request.method == 'POST':
-        ledger_details = request.get_json()
+        account_details = request.get_json()
 
         # Call the function that sets the dr/cr values
-        ledger_details = setting_dr_cr(ledger_details)
+        account_details = setting_dr_cr(account_details)
 
-        # Creating the ledger object
-        ledger_object = Ledger(**ledger_details)
+        # Creating the Account object
+        account_object = Account(**account_details)
 
-        # Saving the ledger to the database
+        # Saving the account to the database
         try:
-            storage.new(ledger_object)
+            storage.new(account_object)
             storage.save()
-        except IntegrityError:
-            return jsonify("ledger name already exists in the system")
+            storage.close()
+        except IntegrityError as e:
+            return jsonify("Account name already exists in the system")
         except Exception as e:
             return jsonify("Unknown Exception occured")
         else:
-            return jsonify("New ledger added successfully")
+            return jsonify("New account added successfully")
 
-def setting_dr_cr(ledger_details):
+def setting_dr_cr(account_details):
     """
     Helper function to set the dr or cr value
     """
-    if ledger_details["drcr"] == "dr":
-        ledger_details["dr"] = ledger_details["ledger_opening_amount"]
-        ledger_details["cr"] = 0
+    if account_details["drcr"] == "dr":
+        account_details["dr"] = account_details["account_opening_amount"]
+        account_details["cr"] = 0
     else:
-        ledger_details["cr"] = ledger_details["ledger_opening_amount"]
-        ledger_details["dr"] = 0
-    del ledger_details["drcr"]
-    return ledger_details
+        account_details["cr"] = account_details["account_opening_amount"]
+        account_details["dr"] = 0
+    del account_details["drcr"]
+    return account_details
 
+
+@accounts_views.route('/last_payment_info', methods=['POST', 'GET'], strict_slashes=False)
+def last_payment_info():
+    """Get the details of last payment made"""
+    if request.method == 'POST':
+        supplier_and_account = request.get_json()
+
+        # Get last payment
+        storage.reload()
+        last_payment = storage.get_last_payment(supplier_and_account["supplier"])
+        balance = storage.get_supplier(supplier_and_account["supplier"]).balance
+
+        if last_payment:
+            # Return last payment details
+            last_payment_details = {
+                "date": last_payment.created_at.strftime("%d/%m/%Y"),
+                "balance": balance
+            }
+            result = jsonify(last_payment_details)
+            storage.save()
+            storage.close()
+            return result, 200
+        else:
+            last_payment_details = {
+                    "date": 0,
+                    "balance": 0
+            }
+            result = jsonify(last_payment_details)
+            storage.save()
+            storage.close()
+            return result, 200
+        
+
+@accounts_views.route('/pay', methods=['POST', 'GET'], strict_slashes=False)
+def payment():
+    if request.method == 'POST':
+        try:
+            payment_details = request.get_json()
+            payment_no = storage.generate_document_number("PAY")
+            # Handle the transaction. Credit the paying account and debit the accounts payable
+            storage.reload()
+            paying_account = storage.get_account(payment_details["payingAccount"])
+            payables_account = storage.get_account("Payables")
+
+            transaction_details = {
+                        "supplier": payment_details["supplier"],
+                        "transaction_number": payment_no,
+                        "amount": payment_details["amountPaid"],
+                        "dr": payables_account.id,
+                        "cr": paying_account.id,
+                        }
+            
+            new_transaction = Transaction(**transaction_details)
+
+            # append the accounts related to this transaction
+            new_transaction.accounts.append(paying_account)
+            new_transaction.accounts.append(payables_account)
+            storage.new_modified(new_transaction)
+
+            # update the supplier account balance
+            supplier = storage.get_supplier(payment_details["supplier"])
+            supplier.balance = supplier.balance - int(payment_details["amountPaid"])
+            storage.new_modified(supplier)   
+        except Exception as e:
+            storage.rollback()
+            storage.close()
+            return jsonify({"error": f"Could not create a new payment. \n {e}"}), 500
+        
+        storage.save()
+        storage.close()
+        return jsonify(f"SUCCESS. \n Payment number {payment_no} created."), 200
+    
+    #payment_voucher_number = storage.generate_document_number('PAY')
+    suppliers = storage.get_all_objects(Supplier)
+    paying_accounts = storage.get_all_paying_accounts()
+
+    return render_template('payment.html',
+                           suppliers=suppliers,
+                           paying_accounts=paying_accounts
+                           )
 
 

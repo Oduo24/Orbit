@@ -266,9 +266,6 @@ async function postJSON(obj) {
 			alert(`${result}`);
 		}
 
-
-		
-
 	} catch (error) {
 		alert(`Error: ${error}`);
 	}
