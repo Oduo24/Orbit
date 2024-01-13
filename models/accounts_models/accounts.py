@@ -63,7 +63,8 @@ class CreditSaleTransaction(BaseModel, Base):
     dr = Column(String(100), ForeignKey('accounts.id'), nullable=True)
     cr = Column(String(100), ForeignKey('accounts.id'), nullable=True)
     accounts = relationship('Account', secondary='accounts_credit_sale_transactions', back_populates='credit_sale_trns')
-    stock_items = relationship('StockItems', secondary='credit_sale_transaction_stock_items', backref='credit_sale_transaction')
+    # One to many relationship between credit_sale_transactions and the association table credit_sale_transaction_stock_items
+    stock_items = relationship('CreditSaleTransactionStockItems', back_populates="credit_sale_transaction")
 
 
     def __init__(self, **kwargs):
@@ -84,9 +85,32 @@ class AccountCreditSaleTransaction(Base):
 
 
 # StockItem and CreditSaleTransaction assosciation table
-credit_sale_transaction_stock_items = Table("credit_sale_transaction_stock_items", Base.metadata,
-        Column('item_name', String(100), ForeignKey('stock_items.item_name'), primary_key=True),
-        Column('transaction_number', String(100), ForeignKey('credit_sale_transactions.transaction_number'), nullable=False, primary_key=True),
-        Column('quantity', Integer, nullable=False),
-        Column('amount', Integer, nullable=False))
+class CreditSaleTransactionStockItems(Base):
+    __tablename__ = "credit_sale_transaction_stock_items"
 
+    stock_item_id = Column(String(100), ForeignKey('stock_items.id'), primary_key=True)
+    transaction_number = Column(String(100), ForeignKey('credit_sale_transactions.transaction_number'), nullable=False, primary_key=True)
+    quantity = Column(Integer, nullable=False)
+    amount = Column(Integer, nullable=False)
+    # One to many relationship from credit_sale_transaction_stock_items to credit_sale_transactions
+    credit_sale_transaction = relationship('CreditSaleTransaction', back_populates="stock_items")
+
+
+class Receipt(BaseModel, Base):
+    """Defines receipts transaction class"""
+    __tablename__ = 'receipts'
+
+    customer_id = Column(String(100), ForeignKey('customers.id'), nullable=False)
+    receipt_number = Column(String(100), nullable=False, unique=True)
+    amount = Column(Integer, nullable=False)
+    remark = Column(String(100), nullable=True)
+    dr_account_id = Column(String(100), ForeignKey('accounts.id'), nullable=True)
+    cr_account_id = Column(String(100), ForeignKey('accounts.id'), nullable=True)
+
+    # One to may relationship with customers table
+    customer = relationship('Customer', back_populates='receipts')
+
+    def __init__(self, **kwargs):
+        """Class constructor
+        """
+        super().__init__(**kwargs)

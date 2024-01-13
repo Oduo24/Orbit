@@ -52,6 +52,7 @@ from views.counter.routes import counter_views
 from views.accounts.routes import accounts_views
 from views.purchase.routes import purchases_views
 from views.sales.routes import sales_views
+from views.receipt.routes import receipt_views
 
 
 # Handling login imports
@@ -83,6 +84,7 @@ app.register_blueprint(counter_views)
 app.register_blueprint(accounts_views)
 app.register_blueprint(purchases_views)
 app.register_blueprint(sales_views)
+app.register_blueprint(receipt_views)
 
 
 #Initializing the db

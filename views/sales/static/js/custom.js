@@ -12,7 +12,8 @@ async function retrieveItemDetails(itemName) {
       			body: JSON.stringify(itemName),
 		});
 		const result = await response.json();
-		return result;
+        return result;
+
 	} catch (error) {
 		alert(`Error: ${error}`);
 	}
@@ -21,25 +22,29 @@ async function retrieveItemDetails(itemName) {
 // Event to handle the selection of item name.(Retrieves the details of selected item name)
 document.querySelector('#salesInvItemDetails').addEventListener('change', async function (event) { 
 	try {
-    const target = event.target;
+        const target = event.target;
 
-    if (target.classList.contains('sale_item_name')) {
-      const row = target.closest('tr');
-      const itemName = row.querySelector('.sale_item_name').value;
-      const data = { itemName: itemName };
-      const itemDetails = await retrieveItemDetails(data);
-      
-      row.querySelector('.sale_item_part_no').value = itemDetails.part_no;
-      row.querySelector('.sale_item_unit').value = itemDetails.base_unit;
+        if (target.classList.contains('sale_item_name')) {
+            const row = target.closest('tr');
+            const itemName = row.querySelector('.sale_item_name').value;
+            const data = { itemName: itemName };
+            const itemDetails = await retrieveItemDetails(data);
 
-      row.querySelector('.avail_item_quantity').disabled = false;
-      row.querySelector('.avail_item_quantity').value = itemDetails.quantity;
-      row.querySelector('.avail_item_quantity').disabled = true;
+            if (itemDetails.error) {
+                throw Error(itemDetails.error);
+            }
+            
+            row.querySelector('.sale_item_part_no').value = itemDetails.part_no;
+            row.querySelector('.sale_item_unit').value = itemDetails.base_unit;
 
-      row.querySelector('.sale_item_rate').disabled = false;
-      row.querySelector('.sale_item_rate').value = itemDetails.rate;
-      row.querySelector('.sale_item_rate').disabled = true;
-    }
+            row.querySelector('.avail_item_quantity').disabled = false;
+            row.querySelector('.avail_item_quantity').value = itemDetails.quantity;
+            row.querySelector('.avail_item_quantity').disabled = true;
+
+            row.querySelector('.sale_item_rate').disabled = false;
+            row.querySelector('.sale_item_rate').value = itemDetails.rate;
+            row.querySelector('.sale_item_rate').disabled = true;
+        }
   } catch(error) {
     alert(error);
   }
@@ -61,7 +66,7 @@ document.querySelector('#salesInvItemDetails').addEventListener('input', event =
 });
 
 
-// Function that updates the grn total amount
+// Function that updates the sale total amount
 function updateTotal() {
 	let total = 0;
 	document.querySelectorAll('.sale_item_amount').forEach((elem) => {
@@ -90,8 +95,6 @@ function checkNegative(number) {
 }
 
 
-
-
 document.querySelector('#add_item_field').addEventListener('click', event => {
     event.preventDefault();
 
@@ -106,9 +109,8 @@ document.querySelector('#add_item_field').addEventListener('click', event => {
         const tableData = document.createElement('td');
         const formInput = document.createElement('input');
 
-  // Adding class form-control to formInput
+        // Adding class form-control to formInput
         formInput.classList.add('form-control');
-
 
   // Check if the next field is the amount field and make it a disabled input
   if (i == 0) {
@@ -165,9 +167,7 @@ document.querySelector('#add_item_field').addEventListener('click', event => {
       tableRow.appendChild(tableData);
       }
     }
-
     tableBody.appendChild(tableRow);
-
 });
 
 // Event listener for removing an item in the invoice list of items
@@ -180,4 +180,111 @@ document.querySelector('#salesInvItemDetails').addEventListener('click', event =
 		updateTotal();
 	}
 });
+
+
+
+///////////////////// HANDLING INVOICE SUBMISSION //////////////////////
+
+// Function that checks for empty values
+function hasEmptyValue(itemsObj) {
+	return Object.values(itemsObj).some(value => !value);
+}
+
+// Function that removes browser elements
+function removeBrowserElements() {
+    const tableBody = document.querySelector('#salesInvItemDetails');
+	tableBody.querySelectorAll('tr').forEach((row) => {
+		row.remove();
+	});
+	document.querySelector('#sale_total_amount').innerHTML = 0;
+	document.querySelector('#customer').value = '';
+        document.querySelector('#saleDate').value = '';
+	document.querySelector('#narration').value = '';
+}
+
+// Function that does the form submission
+async function postJSON(obj) {
+	try {
+		const response = await fetch('/sales/sale', {
+			method: 'POST',
+			headers: {
+        			"Content-Type": "application/json",
+      				},
+			body: JSON.stringify(obj),
+		});
+
+		const result = await response.json();
+        return result;
+	
+	} catch (error) {
+		alert(`Error: ${error}`);
+	}
+}
+
+
+// Event listener for submitting inv
+document.querySelector('#saleSaveBtn').addEventListener('click', selectAllSaleDetails);
+
+function selectAllSaleDetails(event) {
+    event.preventDefault();
+    let invObj = {};
+    let itemsArray = [];
+
+    const customer = document.querySelector('#customer').value;
+    const date = document.querySelector('#saleDate').value;
+    const narration = document.querySelector('#narration').value;
+    const total = document.querySelector('#sale_total_amount').innerHTML;
+    
+    const itemName = document.querySelectorAll('.sale_item_name');
+    const qty = document.querySelectorAll('.sale_quantity');
+    const rate = document.querySelectorAll('.sale_item_rate');
+
+    // Iterate over items
+    for (let index = 0; index < itemName.length; index++) {
+        let itemsObj = {};
+
+        itemsObj.name = itemName[index].value;
+        itemsObj.quantity = checkNegative(qty[index].value);
+        itemsObj.rate = checkNegative(rate[index].value);
+
+        // Check if there is any empty value
+        const validity = hasEmptyValue(itemsObj);
+
+        if (!validity) {
+            itemsArray.push(itemsObj);
+        } else {
+            alert("Empty values present in item details.");
+            return; // Stop further execution
+        }
+    }
+
+    // Add inv details to the invoice object
+    invObj.customer = customer;
+    invObj.date = date;
+    invObj.narration = narration; 
+    invObj.total = total;
+    invObj.items = itemsArray;
+    
+    const invValidity = hasEmptyValue(invObj);
+    if (!invValidity) {
+        // Post data to url
+        postJSON(invObj)
+        .then(result => {
+            if (result.error) {
+                throw Error(result.error);
+            } else {
+                removeBrowserElements();
+                alert(result);
+            }
+        })
+        .catch(error => {
+            alert(error);
+        });
+    } else {
+        alert("Missing Customer Name, Narration, or Date...");
+        return; // Stop further execution
+    }
+}
+
+
 

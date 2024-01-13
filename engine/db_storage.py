@@ -17,9 +17,10 @@ from models.base_model import Base
 from models.counters import Counter
 from models.unique_number_gen import Unique_number
 from models.accounts_models.accounts_group import AccountGroup
-from models.accounts_models.accounts import Account, Transaction, AccountTransaction
+from models.accounts_models.accounts import Account, Transaction, AccountTransaction, CreditSaleTransaction
 from models.purchases import GRN, GRNStockItem, PurchaseInvoice, Supplier, StockItems, PurchasePayment
 from models.document_number import DocumentNumber
+from models.customers import Customer
 
 
 classes = {"Category": Category, "MenuItem":MenuItem, "Uom":Uom, "User":User, "Order":Order,
@@ -447,4 +448,26 @@ class DBStorage:
         if obj:
             return obj
         return None
+    
+    def get_customer_by_name(self, customer_name):
+        """Retrieve a single customer by name"""
+        obj = self.__session.query(Customer).filter_by(customer_name=customer_name).first()
+        if obj:
+            return obj
+        return None
+    
+    def get_object_by_id(self, cls, id):
+        """Retrieve a single customer by name"""
+        obj = self.__session.query(cls).filter_by(id=id).first()
+        if obj:
+            return obj
+        return None
+    
+    def get_invoice_by_invoice_number(self, invoice_number):
+        """Retrieve a single invoice by transaction number"""
+        obj = self.__session.query(CreditSaleTransaction).filter_by(transaction_number=invoice_number).first()
+        if obj:
+            return obj
+        return None
+
 

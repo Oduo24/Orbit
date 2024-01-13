@@ -1,3 +1,131 @@
+///////////////////////// HANDLING INVOICE DETAILS DISPLAY //////////////////////////
+ // Function that fetches data from the backend
+ async function postJSON(obj, url) {
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+        			"Content-Type": "application/json",
+      				},
+			body: JSON.stringify(obj),
+		});
+
+		const result = await response.json();
+    return result;
+	
+	} catch (error) {
+		alert(`Error: ${error}`);
+	}
+}
+
+// Function that loops through the result object  setting up the values of item_name, quantity and amount
+function addInvoiceItemsToDom(result, invNumber) {
+  result.forEach(item => {
+    let item_name = item.item_name;
+    let quantity = item.quantity;
+    let amount = item.amount;
+
+    // Create a table row element
+    let tableRow = document.createElement('tr');
+
+    // Create table data and input tag for each of the column values
+    let itemTableData = document.createElement('td');
+    let itemInputTag = document.createElement('input');
+    itemInputTag.classList.add('form-control');
+    itemInputTag.setAttribute('type', 'text');
+    itemInputTag.setAttribute('disabled', null);
+    itemInputTag.value = item_name;
+
+    let quantityTableData = document.createElement('td');
+    let quantityInputTag = document.createElement('input');
+    quantityInputTag.classList.add('form-control');
+    quantityInputTag.setAttribute('type', 'text');
+    quantityInputTag.setAttribute('disabled', null);
+    quantityInputTag.value = quantity;
+
+    let amountTableData = document.createElement('td');
+    let amountInputTag = document.createElement('input');
+    amountInputTag.classList.add('form-control');
+    amountInputTag.setAttribute('type', 'text');
+    amountInputTag.setAttribute('disabled', null);
+    amountInputTag.value = amount;
+
+    //append child elements to parent elements
+    itemTableData.appendChild(itemInputTag);
+    tableRow.appendChild(itemTableData);
+
+    quantityTableData.appendChild(quantityInputTag);
+    tableRow.appendChild(quantityTableData);
+
+    amountTableData.appendChild(amountInputTag);
+    tableRow.appendChild(amountTableData);
+
+    // Append the node to the document
+    document.querySelector('#invItemDetails').appendChild(tableRow);
+  });
+  document.querySelector('#invNumberDisplay').innerHTML = invNumber;
+}
+
+//Add an event listener on the invoice details buttons 
+let invDetailsBtn = document.querySelectorAll('.invDetails');
+invDetailsBtn.forEach((detailBtn) => {
+  detailBtn.addEventListener('click', (ev) => {
+    ev.preventDefault();
+
+    // Clearing all item details in the dom before loading new ones
+    document.querySelector('#invItemDetails').innerHTML = '';
+    
+    let invNumber = detailBtn.closest('tr').querySelector('.inv_number').textContent;
+
+    url = '/order/inv_item_details';
+    obj = { invNumber: invNumber };
+    postJSON(obj, url)
+    .then(result => {
+      if (result.error) {
+        throw Error(result.error);
+      } else {
+        addInvoiceItemsToDom(result, obj.invNumber);
+        console.log(result);
+      }
+    })
+    .catch(error => {
+      alert(`Error: ${error}`);
+    });
+  });
+});
+
+
+// Select all elements with the class "finishButtonClick" and attach event listeners to them.
+let finishButtons = document.querySelectorAll('.finishButtonClick');
+
+finishButtons.forEach(finishButton => {
+  finishButton.addEventListener('click', (ev) => {
+    ev.preventDefault();
+
+    // Get the invoice number from the parent element's parent element (two levels up in the DOM).
+    let invNumber = finishButton.parentElement.parentElement.querySelector('#invNumberDisplay').innerHTML;
+    obj = { invNumber: invNumber};
+    const invStatusURL = '/order/inv_status/';
+
+    postJSON(obj, invStatusURL)
+    .then(result => {
+      if(result.error) {
+        throw new Error(result.error);
+      } else {
+        let invNumberLabel = document.querySelector('#invNumberDisplay');
+        const addTick = document.createElement("span");
+        addTick.textContent = 'Done';
+        addTick.classList.add("badge", "rounded-pill", "bg-success")
+        invNumberLabel.appendChild(addTick);
+      }
+    })
+    .catch(error => {
+      alert(`Error: ${error}`);
+    });
+  });
+});
+///////////////////////// END OF HANDLING INVOICE DETAILS DISPLAY //////////////////////////
+
 
 const items = document.getElementsByClassName("item-name");
 const itemsName = [].map.call(items, item => item.innerHTML);
@@ -332,5 +460,7 @@ finalPayBtn.addEventListener('click', (ev) => {
     xhr.send(JSON.stringify(data));
     document.querySelector('#loadingSpinner').classList.toggle('d-none');
   }
- });
+});
+
+
 

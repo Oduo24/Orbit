@@ -12,6 +12,9 @@ import time
 # models imports
 from models.menu_items import MenuItem
 from models.orders import Order
+from models.accounts_models.accounts import CreditSaleTransaction
+from models.customers import Customer
+from models.purchases import StockItems
 
 # python imports
 from datetime import datetime
@@ -47,9 +50,18 @@ def get_all_orders():
     """returns all the orders in the system"""
     try:
         all_orders = storage.get_all_orders()
-        if all_orders:
-            number_of_orders = len(all_orders)
-            return render_template('order.html', all_orders=all_orders, number_of_orders=number_of_orders)
+        # Retrieving sales invoices
+        invoices = storage.get_all_objects(CreditSaleTransaction)
+        # Replacing id property with customer name
+        for invoice in invoices:
+            invoice.customer_name = storage.get_object_by_id(Customer, invoice.customer_id).customer_name
+
+        number_of_orders = len(all_orders)
+
+        return render_template('order.html', all_orders=all_orders,
+                                number_of_orders=number_of_orders,
+                                invoices=invoices,
+                                number_of_invoices=len(invoices))
     except Exception as e:
         storage.rollback()
         storage.close()
@@ -170,4 +182,34 @@ def save_order_items(data, order_number):
         storage.create_order_item_inst(order_number, item, quantity, amount)
 
 
+@order_views.route('/inv_item_details', methods=['GET','POST'], strict_slashes=False)
+def get_invoice_items():
+    if request.method == 'POST':
+        invoice_number = request.get_json()
+        try:
+            invoice = storage.get_invoice_by_invoice_number(invoice_number["invNumber"])
+            invoice_items = [
+                {"item_name": storage.get_object_by_id(StockItems, item.stock_item_id).item_name, "quantity": item.quantity, "amount": item.amount}
+                for item in invoice.stock_items
+            ]
+            return jsonify(invoice_items), 200
+        except Exception as e:
+            return jsonify({"error": "Could not retrieve invoice details"}), 500
 
+
+@order_views.route('/inv_status', methods=['GET','POST'], strict_slashes=False)
+def set_invoice_payment_status():
+    if request.method == 'POST':
+        invoice_number = request.get_json()
+        try:
+            storage.reload()
+            invoice = storage.get_invoice_by_invoice_number(invoice_number["invNumber"])
+            if not invoice.isPaid:
+                invoice.isPaid = True   
+                storage.new_modified(invoice)
+                storage.save()
+            return jsonify({"status": "isPaid"}), 200
+        except Exception as e:
+            return jsonify({"error": "Invoice status update failed!"}), 500
+        finally:
+            storage.close()

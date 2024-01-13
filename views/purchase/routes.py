@@ -81,7 +81,6 @@ def add_new_grn():
                 grn_object = GRN(**grn_details)
 
                 items_list = []
-                print(cleaned_data["items"])
                 for item in cleaned_data["items"]:
                     grn_item_details = {}
                     # Get id of the particular item
@@ -101,8 +100,6 @@ def add_new_grn():
                     stockItem.quantity += int(grn_item_details["quantity"])
                     storage.new_modified(stockItem)
                     
-                
-                    print(stockItem.quantity, stockItem.item_name)
 
                 grn_object.items.extend(items_list)
                 storage.new_modified(grn_object)

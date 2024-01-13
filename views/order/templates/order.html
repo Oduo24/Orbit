@@ -13,43 +13,86 @@
 		<a class="btn btn-success" href="{{ url_for('sales_views.make_credit_sale') }}" role="button">Credit Sale</a>
 	</div>
 
-	{% with messages = get_flashed_messages() %}
-	    {% if messages %}
-	    	<div class="success">
-			{{ messages[0] }}
-		</div>
-	    {% endif %}
-	{% endwith %}
+	
+	<div class="container py-2">
+		<h2 class="text-center">Sale Invoices</h2>
+		<hr>
+	</div>
 
-	<table class="table table-dark">
+	<table class="table table-striped table-hover pt-3">
 	<thead>
 		<tr>
-		<th scope="col"></th>
-		<th scope="col">Date</th>
-		<th scope="col">Order no.</th>
-      		<th scope="col">Waiter Name</th>
-		<th scope="col">Table</th>
-      		<th scope="col">Counter</th>
-		<th scope="col">Tender</th>
-		<th scope="col">Amount (Ksh)</th>
-    		</tr>
+			<th scope="col"></th>
+			<th scope="col">Date</th>
+			<th scope="col">invoice no.</th>
+			<th scope="col">Customer</th>
+			<th scope="col">Narration</th>
+			<th scope="col">Amount (Ksh)</th>
+			<th scope="col">IsPaid</th>
+			<th scope="col">Details</th>
+		</tr>
 	</thead>
+	
+	<tr>
+		<th scope="col"></th>
+		<th scope="col">
+			<div class="input-group mb-3">
+				<input type="date" class="form-control" aria-describedby="basic-addon1">
+			</div>
+		</th>
+		<th scope="col">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" id="invoice_number_search" aria-describedby="basic-addon1">
+			</div>	
+		</th>
+		<th scope="col">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" aria-describedby="basic-addon1">
+			</div>
+		</th>
+		<th scope="col">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" aria-describedby="basic-addon1">
+			</div>
+		</th>
+		<th scope="col">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" aria-describedby="basic-addon1">
+			</div>
+		</th>
+		<th scope="col">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" aria-describedby="basic-addon1">
+			</div>
+		</th>
+		<th scope="col"></th>
+	</tr>
+
 	<tbody>
-		{% for order in all_orders %}
+		{% for invoice in invoices %}
 		<tr>
 			<th scope="row"></th>
-			<td>{{ order.created_at.strftime('%d/%m/%Y') }}</td>
-			<td>{{ order.order_number }}</td>
-			<td>{{ order.waiter }}</td>
-			<td>{{ order.table }}</td>
-			<td>{{ order.counter }}</td>
-			<td>{{ order.tender }}</td>
-			<td>{{ order.total }}</td>
+			<td>{{ invoice.created_at.strftime('%d/%m/%Y') }}</td>
+			<td class="inv_number">{{ invoice.transaction_number }}</td>
+			<td>{{ invoice.customer_name }}</td>
+			<td>{{ invoice.narration }}</td>
+			<td>{{ invoice.amount }}</td>
+			{% if invoice.isPaid == true %}
+			<td><p class="text-success">Cleared</p></td>
+			{% else %}
+			<td><p class="text-danger">Pending</p></td>
+			{% endif %}
+
+			<td><button class="btn btn-primary invDetails btn-sm" type="button" data-bs-toggle="offcanvas"
+					data-bs-target="#inv-details" aria-controls="offcanvasWithBothOptions">
+					Details
+				</button>
+			</td>
 		</tr>
 		{% endfor %}
 		<tr>
 			<th scope="row"></th>
-			<td scope="row"><b>Total = {{ number_of_orders }}</b></td>
+			<td scope="row"><b>Total = {{ number_of_invoices }}</b></td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -58,9 +101,34 @@
 			<td></td>
 		</tr>
 	</tbody>
- 
 	</table>
 
+	<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="inv-details" style="width: 50%;" 
+		aria-labelledby="offcanvasWithBothOptionsLabel">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Invoice Items</h5>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body">
+		<h1 class="" id="invNumberDisplay"></h1>
+			<table class="table">
+				<thead>
+					<tr>
+					<th scope="col">Item Name</th>
+					<th scope="col">Quantity</th>
+					<th scope="col">Amount</th>
+					</tr>
+				</thead>
+				<tbody id="invItemDetails">
+	
+
+				</tbody>
+            </table>
+		 <div class="text-center">
+		 	<button type="button" class="btn btn-success finishButtonClick">Tender</button>
+		</div>
+		</div>
+	</div>
 </div>
 
 {% endblock %}

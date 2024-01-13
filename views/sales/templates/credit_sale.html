@@ -14,19 +14,20 @@
 	<div class="offcanvas-body">
 	<form method="POST" action="" id="add_new_ledger">
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder="Invoice No.(SystemGen)" id="grn_no" disabled>
+			<input type="text" class="form-control" placeholder="Invoice No.(SystemGen)" id="invoice_no" disabled>
 				<span class="input-group-text">Date</span>
-				<input class="form-control" type="date" id="grnDate" required>
+				<input class="form-control" type="date" id="saleDate" required>
 		</div>
 		<div class=" input-group mb-3">
-			<input class="form-control" list="customerList" id="supplierName" placeholder="Invoice To" required>
-			<span class="input-group-text">Narration</span>
-			<input class="form-control" type="text" id="grnRef" required>
+			<input class="form-control" list="customerList" id="customer" placeholder="Invoice To" required>
 			<datalist id="customerList">
 				{% for customer in customers %}
 					  <option value="{{ customer.customer_name }}">
 				{% endfor %}
 			</datalist>
+			<span class="input-group-text">Narration</span>
+			<input class="form-control" type="text" id="narration" required>
+			
 		</div>
 
 		<!-- Table for item details -->
@@ -60,8 +61,6 @@
 				<td><h2 class="btn btn-danger remove_sale_item">-</h2></td>
 			  </tr>
 
-			  
-
 			</tbody>
 		</table>
 		<!-- End of table for item details -->
@@ -72,7 +71,7 @@
 
 		   <div class="row justify-content-center text-end pt-5">
 				<div class="col-sm-6 col-md-8 d-grid gap-2">
-				<button type="button" class="btn btn-lg btn-success" id="grnSaveBtn">Save</button>
+				<button type="button" class="btn btn-lg btn-success" id="saleSaveBtn">Save</button>
 			</div>
 		   <div class="col-sm-6 col-md-4">
 			   <h2 class="">Total: Ksh<span class="" id="sale_total_amount">0</span></h2>

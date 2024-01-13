@@ -1,0 +1,13 @@
+.checkout-item-row {
+    min-height: 400px; /* minimum height of 50 pixels */
+}
+
+.box {
+  width: 50px;
+  height: 20px;
+  text-align: center;
+}
+
+.green {
+  background-color: green;
+}

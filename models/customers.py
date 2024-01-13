@@ -13,6 +13,9 @@ class Customer(BaseModel, Base):
     contact = Column(String(100), nullable=True)
     balance = Column(Integer, nullable=False, default=0)
 
+    # One to may relationship with receipts table
+    receipts = relationship('Receipt', back_populates='customer')
+
 
     def __init__(self, **kwargs):
         """Initializes a customer instance

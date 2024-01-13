@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="pt-2">
+	<div class="container py-2">
+		<!-- New Receipt -->
+	<div class="container" data-bs-scroll="true" tabindex="-1" id="credit_sale_form" style="height: 95vh;"
+	aria-labelledby="offcanvasWithBothOptionsLabel">
+	<div class="offcanvas-header">
+		<h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">New Receipt</h5>
+		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+	</div>
+	<div class="offcanvas-body">
+	<form method="POST" action="" id="add_new_receipt">
+		<div class="input-group mb-3">
+			<input class="form-control" list="paidToAccounts" id="paid_to_account" placeholder="Party Acc. (Dr)" required>
+			<datalist id="paidToAccounts">
+				{% for account in accounts %}
+					  <option value="{{ account.account_name }}">
+				{% endfor %}
+			</datalist>
+				<span class="input-group-text">Date</span>
+				<input class="form-control" type="date" id="receiptDate" required>
+		</div>
+		<div class=" input-group mb-3">
+			<input class="form-control" id="receipt_no" placeholder="Receipt No(Sys Gen)" disabled>
+			<span class="input-group-text">Rem</span>
+			<input class="form-control" type="text" id="" disabled>	
+		</div>
+
+		<!-- Table for receipt details -->
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">Ledger Name</th>
+					<th scope="col">Amount(Ksh)</th>
+					<th scope="col">Remarks</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody id="receiptDetails">
+			  <tr>
+				<td><input class="form-control customers" list="customerList"></td>
+				<datalist id="customerList">
+					{% for customer in customers %}
+						<option value="{{ customer.customer_name }}">
+					{% endfor %}
+				</datalist>
+				<td><input type="text" class="form-control receipt_amount"></td>
+				<td><input type="text" class="form-control remarks"></td>
+				<td><h2 class="btn btn-danger remove_receipt">-</h2></td>
+			  </tr>
+			</tbody>
+		</table>
+		<!-- End of table for receipt details -->
+				  
+		   <div class="" id="">
+			   <button type="button" class="btn btn-success float-start" id="add_item_field">+</button>
+			</div>
+
+		   <div class="row justify-content-center text-end pt-5">
+				<div class="col-sm-6 col-md-8 d-grid gap-2">
+				<button type="button" class="btn btn-lg btn-success" id="receiptSaveBtn">Save</button>
+			</div>
+		  </div>
+	</form>
+</div>
+	</div>
+</div>
+
+{% endblock %}

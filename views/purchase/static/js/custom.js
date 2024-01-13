@@ -255,7 +255,6 @@ async function postJSON(obj) {
 		});
 
 		const result = await response.json();
-		console.log(response);
 
 		if (!response.ok) {
 			alert(`${result}`);
