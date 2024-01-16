@@ -119,7 +119,7 @@ function removeBrowserElements() {
 	tableBody.querySelectorAll('tr').forEach((row) => {
 		row.remove();
 	});
-	document.querySelector('#paid_to_account').innerHTML = 0;
+	document.querySelector('#paid_to_account').innerHTML = '';
     document.querySelector('#receiptDate').value = '';
 }
 
@@ -171,7 +171,7 @@ document.querySelector('#receiptSaveBtn').addEventListener('click', event => {
                 throw Error(result.error);
             } else {
                 removeBrowserElements();
-                alert(result);
+                alert(`Success. Created receipts: ${result}`);
             }
         })
         .catch(error => {

@@ -76,7 +76,6 @@ class Supplier(BaseModel, Base):
     """Defines the Supplier class"""
     __tablename__ = 'suppliers'
 
-    account_no = Column(String(100), nullable=False)
     supplier_name = Column(String(100), nullable=False, unique=True)
     contact = Column(String(100), nullable=True)
     balance = Column(Integer, nullable=False, default=0)

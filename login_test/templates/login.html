@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://accounts.google.com/gsi/client" async></script>
+</head>
+<body>
+    <body>
+        <div id="g_id_onload"
+            data-client_id="846669823998-rg0qsn4bp3fqlvoa1jevkfr51st8gbon.apps.googleusercontent.com"
+            data-login_uri=""
+            data-auto_prompt="false">
+        </div>
+        <div id="buttonDiv"></div>
+    <body>
+
+        <script>
+            function parseJwt(token) {
+              // Split the token into three parts: header, payload, and signature
+              const parts = token.split('.');
+              // Decode the payload (second part)
+              const decodedPayload = atob(parts[1]);
+              // Parse the JSON data in the payload
+              return JSON.parse(decodedPayload);
+            }
+
+            function handleCredentialResponse(response) {
+              const jwtToken = response.credential;
+              const decodedToken = parseJwt(jwtToken);
+              console.log(decodedToken.email);
+              console.log(decodedToken.name);
+            }
+            
+            window.onload = function () {
+              google.accounts.id.initialize({
+                client_id: "846669823998-rg0qsn4bp3fqlvoa1jevkfr51st8gbon.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+              });
+              google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { theme: "outline", size: "large" }  // customization attributes
+              );
+            }
+          </script>
+</body>
+</html>

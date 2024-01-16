@@ -37,11 +37,12 @@ def receive_payment():
         try:
             storage.reload()
             receipt_details = request.get_json()
-            
             dr_account_id = storage.get_account(receipt_details["paid_to_account"]).id
 
+            generated_receipts = []
             for individual_receipt in receipt_details["individualReceipts"]:
                 receipt_no = storage.generate_document_number("RCT")
+                generated_receipts.append(receipt_no)
                 customer = storage.get_customer_by_name(individual_receipt["customer"])
                 cr_account_id = storage.get_account('Receivables').id
                 receiptObj = {
@@ -54,12 +55,11 @@ def receive_payment():
                 new_receipt = Receipt(**receiptObj)
                 new_receipt.customer = customer
                 storage.save()
-            return jsonify("Success")
+            return jsonify(generated_receipts), 200
 
         except Exception as e:
             storage.rollback()
-            print(e)
-            return jsonify({"error": "Error saving receipt information"})   
+            return jsonify({"error": "Error saving receipt information"}), 500
         finally:
             storage.close()
 
