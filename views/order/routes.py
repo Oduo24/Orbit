@@ -213,3 +213,33 @@ def set_invoice_payment_status():
             return jsonify({"error": "Invoice status update failed!"}), 500
         finally:
             storage.close()
+
+
+@order_views.route('/new_customer', methods=['GET', 'POST'], strict_slashes=False)
+def new_customer():
+    if request.method == 'POST':
+        data = request.get_json()
+        
+        try:
+            storage.reload()
+            #check if customer name exists if not save the new supplier and return new customer name
+            customer = storage.get_customer_by_name(data["new_customer_name"])
+            if customer:
+                return jsonify({"error":"Customer name already exists...!"}), 500
+            else:
+                new_customer = {
+                    "customer_name": data["new_customer_name"],
+                    "contact": data["contact"],
+                    "balance": 0    #Force zero starting balance
+                }
+                new_customer_obj = Customer(**new_customer)
+                storage.new_modified(new_customer_obj)
+                return jsonify({"customer": data["new_customer_name"]}), 200
+        
+        except Exception as e:
+            print(e)
+            storage.rollback()
+            return jsonify({"error": str(e)}), 500
+        finally:
+            storage.save()
+            storage.close()

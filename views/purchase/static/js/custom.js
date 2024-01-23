@@ -536,8 +536,8 @@ async function postData(data, url) {
 		const response = await fetch(url, {
 			method: 'POST',
 			headers: {
-                            "Content-Type": "application/json",
-                         },
+                        "Content-Type": "application/json",
+                    },
 			body: JSON.stringify(data)
 		});
 
@@ -546,7 +546,7 @@ async function postData(data, url) {
 		if (response.ok) {
 			return result;
 		} else {
-			alert(result.error);
+			throw Error(result.error);
 		}
 	}
 	catch (error) {
@@ -565,3 +565,55 @@ function clearInvDetails() {
         document.querySelector('#invNarration').value = '';
         document.querySelector('#invoice_total_amount').innerText = 0;
 }
+
+
+///////////////// ADD NEW SUPPLIER //////////////////////////
+function hasEmptyValue(obj) {
+    for (let key in obj) {
+        if (!obj[key]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function removeSupplierDetailsOnDom() {
+	document.querySelector('#new_supplier_name').value = '';
+	document.querySelector('#contact').value = '';
+	document.querySelector('#starting_balance').value = '';
+}
+
+document.querySelector('#save_new_supplier').addEventListener('click', event => {
+	event.preventDefault();
+
+	const new_supplier_name = document.querySelector('#new_supplier_name').value;
+	const contact = document.querySelector('#contact').value;
+	const starting_balance = document.querySelector('#starting_balance').value;
+
+	// Post to backend
+	supplierDetails = {
+		new_supplier_name: new_supplier_name,
+		contact: contact,
+		starting_balance: starting_balance,
+	}
+	url = '/purchases/new_supplier'
+
+	if (hasEmptyValue(supplierDetails)) {
+		alert("Error: Empty fields present");
+		return;
+	} else {
+		postData(supplierDetails, url)
+		.then(result => {
+			if (result.error) {
+				throw Error(`${result.error}`);
+			} else {
+				removeSupplierDetailsOnDom();
+				alert(`New supplier added successfuly: ${result.supplier}`); 
+			}
+		})
+		.catch(error => {
+			alert(error);
+		});
+	}
+
+});

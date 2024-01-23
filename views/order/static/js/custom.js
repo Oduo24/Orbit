@@ -126,6 +126,62 @@ finishButtons.forEach(finishButton => {
 });
 ///////////////////////// END OF HANDLING INVOICE DETAILS DISPLAY //////////////////////////
 
+///////////////////////////////// ADD NEW CUSTOMER ////////////////////////////////////////
+function hasEmptyValue(obj) {
+  for (let key in obj) {
+      if (!obj[key]) {
+        return true;
+      }
+  }
+  return false;
+}
+
+function removeCustomerDetailsOnDom() {
+document.querySelector('#new_customer_name').value = '';
+document.querySelector('#contact').value = '';
+document.querySelector('#starting_balance').value = '';
+}
+
+const saveNewCustomer = document.querySelector('#save_new_customer');
+
+if (saveNewCustomer) {
+  saveNewCustomer.addEventListener('click', event => {
+    event.preventDefault();
+
+    const new_customer_name = document.querySelector('#new_customer_name').value;
+    const contact = document.querySelector('#contact').value;
+    const starting_balance = document.querySelector('#starting_balance').value;
+
+    // Post to backend
+    const customerDetails = {
+      new_customer_name: new_customer_name,
+      contact: contact,
+      starting_balance: starting_balance,
+    }
+    url = '/order/new_customer'
+
+    if (hasEmptyValue(customerDetails)) {
+      alert("Error: Empty fields present");
+      return;
+    } else {
+      postJSON(customerDetails, url)
+      .then(result => {
+        if (result.error) {
+          throw Error(`${result.error}`);
+        } else {
+          removeCustomerDetailsOnDom();
+          alert(`New customer added successfuly: ${result.customer}`); 
+        }
+      })
+      .catch(error => {
+        alert(error);
+      });
+    }
+  });
+}
+
+///////////////////////////////// END OF ADD NEW CUSTOMER ////////////////////////////////////////
+
 
 const items = document.getElementsByClassName("item-name");
 const itemsName = [].map.call(items, item => item.innerHTML);

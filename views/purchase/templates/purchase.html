@@ -306,7 +306,7 @@
 				<form method="POST" action="" id="add_supplier_form">
 					<div class="mb-3">
 						<label for="supplier_name" class="form-label">Supplier Name:</label>
-						<input type="text" class="form-control" id="supplier_name" name="supplier_name">
+						<input type="text" class="form-control" id="new_supplier_name" name="supplier_name">
 					</div>
 					<div class="mb-3">
 						<label for="contact" class="form-label">Contact:</label>
@@ -314,10 +314,10 @@
 					</div>
 					<div class="mb-3">
 						<label for="balance" class="form-label">Balance:</label>
-						<input type="number" class="form-control" id="balance" name="balance">
+						<input type="number" class="form-control" id="starting_balance" name="balance">
 					</div>
 					<div class="modal-footer">
-						<button onclick="waiter_form_submit()" name="Btn" type="button" class="btn btn-primary">Save</button>
+						<button name="Btn" type="button" class="btn btn-primary" id="save_new_supplier">Save</button>
 					</div>
 				</form>
 				</div>

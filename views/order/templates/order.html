@@ -11,6 +11,10 @@
 		<a class="btn btn-success" href="#" role="button">Orders</a>
 		<a class="btn btn-success" href="{{ url_for('order_views.make_counter_order') }}" role="button">Counter</a>
 		<a class="btn btn-success" href="{{ url_for('sales_views.make_credit_sale') }}" role="button">Credit Sale</a>
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addNewCustomer">
+			+Customer
+		</button>
 	</div>
 
 	
@@ -128,6 +132,37 @@
 		 	<button type="button" class="btn btn-success finishButtonClick">Tender</button>
 		</div>
 		</div>
+	</div>
+</div>
+
+<!-- Modal Add Customer-->
+<div class="modal fade" id="addNewCustomer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Add a new Customer</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+				<form method="POST" action="" id="add_supplier_form">
+					<div class="mb-3">
+						<label for="supplier_name" class="form-label">Customer Name:</label>
+						<input type="text" class="form-control" id="new_customer_name">
+					</div>
+					<div class="mb-3">
+						<label for="contact" class="form-label">Contact:</label>
+						<input type="text" class="form-control" id="contact">
+					</div>
+					<div class="mb-3">
+						<label for="balance" class="form-label">Balance:</label>
+						<input type="number" class="form-control" id="starting_balance" name="balance">
+					</div>
+					<div class="modal-footer">
+						<button name="Btn" type="button" class="btn btn-primary" id="save_new_customer">Save</button>
+					</div>
+				</form>
+				</div>
+			</div>
 	</div>
 </div>
 

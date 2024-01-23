@@ -293,3 +293,32 @@ def new_invoice():
         storage.save()
         storage.close()
         return jsonify(f"SUCCESS. \n Invoice number {invoice_no} created."), 200
+
+
+@purchases_views.route('/new_supplier', methods=['GET', 'POST'], strict_slashes=False)
+def new_supplier():
+    if request.method == 'POST':
+        data = request.get_json()
+        
+        try:
+            storage.reload()
+            #check if supplier name exists if not save the new supplier and return new supplier name
+            supplier = storage.get_supplier(data["new_supplier_name"])
+            if supplier:
+                return jsonify({"error":"Supplier name already exists...!"}), 500
+            else:
+                new_supplier = {
+                    "supplier_name": data["new_supplier_name"],
+                    "contact": data["contact"],
+                    "balance": 0    #Force zero starting balance
+                }
+                new_supplier_obj = Supplier(**new_supplier)
+                storage.new_modified(new_supplier_obj)
+                return jsonify({"supplier": data["new_supplier_name"]}), 200
+        
+        except Exception as e:
+            storage.rollback()
+            return jsonify({"error": str(e)}), 500
+        finally:
+            storage.save()
+            storage.close()
